@@ -7,4 +7,4 @@ target/
 *.log
 # nunca versionar segredos
 .env
-application-local.yml
+application.yml
