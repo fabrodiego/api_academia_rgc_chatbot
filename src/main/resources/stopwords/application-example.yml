@@ -1,0 +1,19 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:academia_rgc_chatbot}?currentSchema=chatbot
+    username: ${DB_USER:user}
+    password: ${DB_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none   # schema é gerenciado pelos scripts SQL, não pelo Hibernate
+    open-in-view: false
+    properties:
+      hibernate:
+        default_schema: chatbot
+
+chatbot:
+  fallback-threshold: 0.18   # abaixo disso, encaminha para atendimento humano
