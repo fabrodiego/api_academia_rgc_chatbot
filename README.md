@@ -40,9 +40,17 @@ src/main/java/com/rgctraining/chatbot/
 └── dto/          contratos de entrada/saída da API
 
 sql/
-├── schema.sql    estrutura das tabelas
-└── seed.sql      base de conhecimento inicial (intents de exemplo)
+├── schema.sql                              estrutura das tabelas (instalação nova)
+├── seed.sql                                base de conhecimento inicial (intents de exemplo)
+├── migration_001_feedback_aprendizado.sql  incremento para banco já existente (colunas de origem/rastreabilidade)
+└── ampliacao_training_phrases.sql          variações extras de frases de treino por intenção
 ```
+
+Em uma instalação nova, rode `schema.sql` → `seed.sql` → `ampliacao_training_phrases.sql`, nessa ordem
+(`schema.sql` já inclui as colunas de rastreabilidade, então `migration_001` não é necessária).
+
+Em um banco que já estava rodando antes dessas mudanças, rode primeiro `migration_001_feedback_aprendizado.sql`
+e depois `ampliacao_training_phrases.sql`.
 
 ## Configuração
 
@@ -93,3 +101,21 @@ Para recarregar o modelo após alterar `training_phrases` sem reiniciar a aplica
 ```bash
 curl -X POST http://localhost:8080/api/chat/recarregar-modelo
 ```
+
+## Aprendizado por feedback confirmado
+
+O sistema **não** aprende automaticamente de toda conversa — isso reforçaria
+erros de classificação (uma mensagem mal classificada, se virasse treino para
+a intenção errada, ensinaria o erro ao invés de corrigi-lo).
+
+Em vez disso, uma conversa só vira novo dado de treino depois que um humano
+confirma qual era a intenção correta:
+
+```bash
+curl -X POST http://localhost:8080/api/chat/feedback \
+  -H "Content-Type: application/json" \
+  -d '{"conversationId": 42, "intentCorreta": "planos_matricula"}'
+```
+
+Isso cria uma linha em `training_phrases` com `origem = 'aprendida'` (rastreável
+até a conversa de origem via `conversation_id`) e recarrega o modelo automaticamente.
