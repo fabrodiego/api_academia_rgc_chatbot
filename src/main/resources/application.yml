@@ -17,6 +17,8 @@ spring:
 
 chatbot:
   fallback-threshold: 0.18   # abaixo disso, encaminha para atendimento humano
+  admin-key: ${ADMIN_KEY:}   # chave dos endpoints de dev (vazia = bloqueado)
+
 
 management:
   endpoints:
