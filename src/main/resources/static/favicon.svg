@@ -1,0 +1,38 @@
+
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1024" height="1024">
+                    <defs>
+                        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#082f49" />
+                            <stop offset="100%" stop-color="#020617" />
+                        </linearGradient>
+                        <linearGradient id="rgcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#22d3ee" />
+                            <stop offset="100%" stop-color="#60a5fa" />
+                        </linearGradient>
+                        <linearGradient id="rgcGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#60a5fa" />
+                            <stop offset="100%" stop-color="#38bdf8" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="512" height="512" rx="112" fill="#090d16" stroke="#1e293b" stroke-width="8" />
+                    <g transform="translate(0,0)">
+                        
+                    <!-- Hexagon Border Outer -->
+                    <polygon points="256,40 430,140 430,340 256,440 82,340 82,140" fill="none" stroke="url(#rgcGrad)" stroke-width="12" opacity="0.3"/>
+                    
+                    <!-- Integrated RGC Tech Monogram -->
+                    <!-- R -->
+                    <path d="M 140,330 L 140,180 L 210,180 C 240,180 240,230 210,230 L 140,230 M 185,230 L 225,330" 
+                          stroke="url(#rgcGrad)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    
+                    <!-- G -->
+                    <path d="M 300,210 L 260,180 L 250,180 C 220,180 220,330 260,330 L 300,330 L 300,265 L 260,265" 
+                          stroke="url(#rgcGrad)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+                    <!-- C -->
+                    <path d="M 380,200 L 340,180 C 310,180 300,230 300,260 C 300,310 330,330 370,330 L 390,315" 
+                          stroke="url(#rgcGrad2)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                
+                    </g>
+                </svg>
+            
