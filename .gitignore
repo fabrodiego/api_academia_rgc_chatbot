@@ -7,3 +7,5 @@ target/
 *.log
 # nunca versionar segredos
 .env
+# Contexto Claude
+CLAUDE.md
