@@ -18,6 +18,7 @@ Usuário → POST /api/chat
 ```
 
 - **Base de conhecimento**: tabelas `intents`, `training_phrases`, `bot_responses`.
+- **Avaliação**: tabela `test_cases` com a intenção esperada de cada pergunta (acurácia e matriz de confusão).
 - **Fallback controlado**: limiar configurável via `chatbot.fallback-threshold`.
 - **Contexto de sessão**: última intenção detectada mantida por `sessionId`.
 - **Log de conversas**: toda interação é persistida, servindo de base para avaliação.
@@ -27,6 +28,7 @@ Usuário → POST /api/chat
 - Java 17, Spring Boot 3, Spring Data JPA
 - PostgreSQL
 - Maven
+- springdoc-openapi (Swagger)
 
 ## Estrutura do projeto
 
@@ -39,30 +41,30 @@ src/main/java/com/rgctraining/chatbot/
 ├── repository/   acesso a dados
 └── dto/          contratos de entrada/saída da API
 
+src/main/resources/
+├── static/       site da academia com o chat (servido pela própria aplicação)
+└── stopwords/    lista de stopwords em português
+
 sql/
-├── schema.sql                              estrutura das tabelas (instalação nova)
-├── seed.sql                                base de conhecimento inicial (intents de exemplo)
-├── migration_001_feedback_aprendizado.sql  incremento para banco já existente (colunas de origem/rastreabilidade)
-└── ampliacao_training_phrases.sql          variações extras de frases de treino por intenção
+└── banco.sql   estrutura + base completa (intents, respostas, frases de treino e casos de teste)
 ```
 
-Em uma instalação nova, rode `schema.sql` → `seed.sql` → `ampliacao_training_phrases.sql`, nessa ordem
-(`schema.sql` já inclui as colunas de rastreabilidade, então `migration_001` não é necessária).
-
-Em um banco que já estava rodando antes dessas mudanças, rode primeiro `migration_001_feedback_aprendizado.sql`
-e depois `ampliacao_training_phrases.sql`.
+O `banco.sql` cria as tabelas que ainda não existem e **substitui todos os dados**
+(as tabelas e as permissões continuam). Serve tanto para instalação nova quanto
+para reiniciar a base de um banco já em uso.
 
 ## Configuração
 
-A aplicação lê a conexão com o banco via variáveis de ambiente:
+A aplicação lê a configuração via variáveis de ambiente:
 
 | Variável      | Padrão                     |
 |---------------|----------------------------|
-| `DB_HOST`     | `localhost`                |
+| `DB_HOST`     | —                          |
 | `DB_PORT`     | `5432`                     |
 | `DB_NAME`     | `academia_rgc_chatbot`     |
 | `DB_USER`     | —                          |
 | `DB_PASSWORD` | —                          |
+| `ADMIN_KEY`   | — (sem ela, `feedback` e `recarregar-modelo` ficam bloqueados) |
 
 Nenhuma credencial é versionada no repositório.
 
@@ -70,16 +72,21 @@ Nenhuma credencial é versionada no repositório.
 
 ```bash
 # 1. Banco de dados (requer um Postgres acessível e já criado)
-psql -d academia_rgc_chatbot -f sql/schema.sql
-psql -d academia_rgc_chatbot -f sql/seed.sql
+psql -d academia_rgc_chatbot -v ON_ERROR_STOP=1 -f sql/banco.sql
 
 # 2. Aplicação
+export DB_HOST=<host>
 export DB_USER=<usuario>
 export DB_PASSWORD=<senha>
+export ADMIN_KEY=<chave-dos-devs>
 mvn spring-boot:run
 ```
 
+Site com o chat: `http://localhost:8080/`
+
 ## API
+
+Documentação interativa (Swagger): `http://localhost:8080/swagger-ui/index.html`
 
 ```bash
 curl -X POST http://localhost:8080/api/chat \
@@ -97,9 +104,11 @@ Resposta:
 }
 ```
 
-Para recarregar o modelo após alterar `training_phrases` sem reiniciar a aplicação:
+Para recarregar o modelo após alterar `training_phrases` sem reiniciar a aplicação
+(endpoint restrito: exige o header `X-Admin-Key`):
 ```bash
-curl -X POST http://localhost:8080/api/chat/recarregar-modelo
+curl -X POST http://localhost:8080/api/chat/recarregar-modelo \
+  -H "X-Admin-Key: <chave-dos-devs>"
 ```
 
 ## Aprendizado por feedback confirmado
@@ -109,12 +118,13 @@ erros de classificação (uma mensagem mal classificada, se virasse treino para
 a intenção errada, ensinaria o erro ao invés de corrigi-lo).
 
 Em vez disso, uma conversa só vira novo dado de treino depois que um humano
-confirma qual era a intenção correta:
+da equipe confirma qual era a intenção correta (endpoint restrito: exige o header `X-Admin-Key`):
 
 ```bash
 curl -X POST http://localhost:8080/api/chat/feedback \
   -H "Content-Type: application/json" \
-  -d '{"conversationId": 42, "intentCorreta": "planos_matricula"}'
+  -H "X-Admin-Key: <chave-dos-devs>" \
+  -d '{"conversationId": 42, "intentCorreta": "planos_valores"}'
 ```
 
 Isso cria uma linha em `training_phrases` com `origem = 'aprendida'` (rastreável
