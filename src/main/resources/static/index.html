@@ -4,321 +4,207 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Academia RGC Training</title>
- <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="description" content="Academia RGC Training em Palhoça (SC): musculação, aulas coletivas, personal trainer e atendimento 24h pelo chat.">
+<meta name="theme-color" content="#101820">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#EEF1F4;--ink:#101820;--mute:#4D5A66;--blue:#2B4CFF;--sun:#FFC93C;--card:#fff;--line:#D3D9E0;
---head:'Archivo','Arial Narrow',Arial,sans-serif;--body:'Public Sans',system-ui,sans-serif}
-*{box-sizing:border-box;margin:0}
-html{scroll-behavior:smooth}
-body{font:400 17px/1.6 var(--body);color:var(--ink);background:var(--bg)}
-a{color:inherit}
-:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
-.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
-h1,h2,h3{font-family:var(--head);line-height:1.02;letter-spacing:-.01em}
-h2{font-size:clamp(34px,5vw,54px);font-weight:800;font-stretch:90%;margin-bottom:12px}
-section{padding:84px 0}
-.lead{color:var(--mute);max-width:56ch;margin-bottom:40px}
-
-header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
-header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-.logo{font:900 22px var(--head);font-stretch:110%;text-decoration:none}
-.logo span{color:var(--blue)}
-nav{display:flex;gap:26px;font-weight:500;font-size:15px}
-nav a{text-decoration:none}
-nav a:hover{color:var(--blue)}
-
-.hero{padding:72px 0 88px}
-.hero .wrap{display:grid;grid-template-columns:1.35fr 1fr;gap:48px;align-items:center}
-.hero h1{font-size:clamp(52px,9vw,116px);font-weight:900;font-stretch:112%;text-transform:none}
-.hero h1 em{font-style:normal;background:var(--sun);padding:0 .12em}
-.hero p{margin:24px 0 32px;max-width:46ch;color:var(--mute);font-size:19px}
-.btn{display:inline-block;padding:14px 26px;border-radius:6px;font-weight:600;text-decoration:none;border:2px solid var(--ink);cursor:pointer;font:600 16px var(--body)}
-.btn.main{background:var(--ink);color:#fff}
-.btn.main:hover{background:var(--blue);border-color:var(--blue)}
-.btn.ghost{margin-left:10px;background:transparent}
-.btn.ghost:hover{background:var(--ink);color:#fff}
-
-.today{background:var(--ink);color:#fff;border-radius:14px;padding:30px}
-.today small{color:#9FB0BF;font-size:14px}
-.status{display:flex;align-items:center;gap:12px;font:800 38px var(--head);font-stretch:100%;margin:6px 0 4px}
-.dot{width:14px;height:14px;border-radius:50%;background:#7C8A97}
-.open .dot{background:var(--sun);box-shadow:0 0 0 6px rgba(255,201,60,.25)}
-.today p{margin:0;color:#C9D4DE;font-size:16px}
-
-.hours{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:2px solid var(--ink);border-radius:12px;background:var(--card);overflow:hidden}
-.hours div{padding:28px;border-right:1px solid var(--line)}
-.hours div:last-child{border:0}
-.hours div.now{background:var(--sun)}
-.hours h3{font-size:24px;font-weight:800;margin-bottom:6px}
-.hours b{font:800 30px var(--head)}
-
-.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
-.plan{background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:30px;display:flex;flex-direction:column}
-.plan.best{background:var(--blue);color:#fff;border-color:var(--blue)}
-.plan h3{font-size:26px;font-weight:800}
-.price{font:900 56px var(--head);font-stretch:105%;margin:14px 0 2px}
-.price small{font:500 16px var(--body)}
-.plan ul{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:8px;font-size:16px}
-.plan li::before{content:"✓ ";font-weight:700}
-.note{margin-top:18px;color:var(--mute);font-size:15px}
-
-.diff{background:var(--ink);color:#fff}
-.diff .lead{color:#9FB0BF}
-.diffs{display:grid;grid-template-columns:repeat(2,1fr);gap:0 56px}
-.diffs div{padding:22px 0;border-top:1px solid #34424F}
-.diffs h3{font-size:26px;font-weight:800;color:var(--sun);margin-bottom:6px}
-.diffs p{color:#C9D4DE;font-size:16px}
-
-.contact{display:grid;grid-template-columns:1fr 1fr;gap:56px}
-.contact dl{display:grid;gap:22px}
-.contact dt{font-weight:600}
-.contact dd{color:var(--mute)}
-.map{border:2px solid var(--ink);border-radius:12px;background:repeating-linear-gradient(45deg,#E1E6EB 0 12px,#EAEEF2 12px 24px);min-height:260px;display:grid;place-items:center;text-align:center;padding:20px;font-weight:600}
-footer{padding:28px 0;border-top:1px solid var(--line);color:var(--mute);font-size:14px}
-
-/* ---------- Chatbot ---------- */
-#fab{position:fixed;right:22px;bottom:22px;z-index:20;height:58px;padding:0 22px 0 18px;border-radius:30px;border:0;background:var(--blue);color:#fff;font:600 16px var(--body);display:flex;align-items:center;gap:10px;cursor:pointer;box-shadow:0 8px 24px rgba(16,24,32,.28)}
-#fab:hover{background:#1E3AD6}
-#chat{position:fixed;right:22px;bottom:96px;z-index:20;width:370px;max-width:calc(100vw - 32px);height:540px;max-height:calc(100vh - 120px);background:var(--card);border:2px solid var(--ink);border-radius:16px;display:none;flex-direction:column;overflow:hidden;box-shadow:0 18px 50px rgba(16,24,32,.3)}
-#chat.show{display:flex;animation:pop .18s ease-out}
-@keyframes pop{from{opacity:0;transform:translateY(10px)}}
-.ch-head{background:var(--ink);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
-.ch-head b{font:800 18px var(--head)}
-.ch-head small{display:block;color:#9FB0BF;font-size:13px}
-.ch-head button{background:none;border:0;color:#fff;font-size:26px;cursor:pointer;line-height:1}
-#msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
-.m{max-width:84%;padding:10px 14px;border-radius:14px;font-size:15px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
-.m.bot{background:var(--card);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
-.m.me{background:var(--blue);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
-.m.fb{border-color:var(--sun);border-width:2px}
-.m.err{background:#FDECEC;border-color:#E5A3A3}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chips button{border:1.5px solid var(--ink);background:var(--card);border-radius:20px;padding:6px 12px;font:500 14px var(--body);cursor:pointer}
-.chips button:hover{background:var(--ink);color:#fff}
-.typing{opacity:.6;font-style:italic}
-.ch-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:var(--card)}
-.ch-form input{flex:1;min-width:0;border:2px solid var(--line);border-radius:8px;padding:10px 12px;font:400 15px var(--body)}
-.ch-form input:focus{border-color:var(--blue);outline:0}
-.ch-form button{border:0;background:var(--ink);color:#fff;border-radius:8px;padding:0 16px;font:600 15px var(--body);cursor:pointer}
-.ch-form button:disabled{opacity:.5;cursor:default}
-
-@media(max-width:860px){
- nav{display:none}
- .hero .wrap,.contact{grid-template-columns:1fr}
- .hours,.plans,.diffs{grid-template-columns:1fr}
- .hours div{border-right:0;border-bottom:1px solid var(--line)}
- section{padding:60px 0}
- #chat{right:16px;bottom:88px;height:calc(100vh - 110px)}
-}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
-</style>
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+
+<a class="skip" href="#inicio">Pular para o conteúdo</a>
 
 <header>
  <div class="wrap">
   <a class="logo" href="#inicio">RGC<span>.</span>TRAINING</a>
-  <nav>
-   <a href="#horarios">Horários</a><a href="#planos">Planos</a>
+  <nav id="nav" aria-label="Principal">
+   <a href="#horarios">Horários</a><a href="#planos">Planos</a><a href="#modalidades">Modalidades</a>
    <a href="#diferenciais">Diferenciais</a><a href="#contato">Contato</a>
+   <button type="button" class="btn nav-cta" data-open-chat>Falar no chat</button>
   </nav>
+  <button type="button" id="burger" aria-controls="nav" aria-expanded="false" aria-label="Abrir menu">
+   <span></span><span></span><span></span>
+  </button>
  </div>
 </header>
 
 <main id="inicio">
  <div class="hero">
   <div class="wrap">
-   <div>
+   <div class="hero-copy">
+    <p class="eyebrow">Palhoça · SC</p>
     <h1>Treine no seu <em>ritmo.</em></h1>
-    <p>Musculação, aulas coletivas e acompanhamento de verdade, perto de você. Conheça a RGC Training e faça sua matrícula.</p>
-    <a class="btn main" href="#planos">Ver planos</a>
-    <a class="btn ghost" href="#contato">Falar com a gente</a>
+    <p class="hero-text">Musculação, aulas coletivas e acompanhamento de verdade, perto de você. Conheça a RGC Training e faça sua matrícula.</p>
+    <div class="cta">
+     <a class="btn main" href="#planos">Ver planos</a>
+     <button type="button" class="btn ghost" data-open-chat>Tirar dúvidas no chat</button>
+    </div>
+    <ul class="stats" aria-label="Resumo">
+     <li><b>6</b><span>modalidades</span></li>
+     <li><b>3</b><span>planos</span></li>
+     <li><b>24h</b><span>chat de atendimento</span></li>
+    </ul>
    </div>
-   <div class="today" id="today">
+   <div class="today" id="today" aria-live="polite">
     <small>Agora na academia</small>
     <div class="status"><span class="dot"></span><span id="st">Verificando…</span></div>
     <p id="st2"></p>
+    <p class="today-line" id="st3"></p>
    </div>
   </div>
  </div>
 
- <section id="horarios" style="padding-top:0">
-  <div class="wrap">
+ <section id="horarios" class="tight">
+  <div class="wrap reveal">
+   <p class="kicker">01 · Horários</p>
    <h2>Horário de funcionamento</h2>
-   <p class="lead">Abrimos cedo para quem treina antes do trabalho e fechamos tarde para quem treina depois.</p>
-   <div class="hours" id="hours">
-    <div data-d="1,2,3,4,5"><h3>Segunda a sexta</h3><b>05h30 – 23h00</b></div>
-    <div data-d="6"><h3>Sábado</h3><b>07h00 – 19h00</b></div>
-    <div data-d="0"><h3>Domingo e feriados</h3><b>08h00 – 14h00</b></div>
-   </div>
+   <p class="lead">Treine antes ou depois do trabalho, de segunda a sábado.</p>
+   <div class="hours" id="hours"></div>
   </div>
  </section>
 
- <section id="planos" style="padding-top:20px">
-  <div class="wrap">
+ <section id="planos" class="tight">
+  <div class="wrap reveal">
+   <p class="kicker">02 · Planos</p>
    <h2>Planos e matrícula</h2>
    <p class="lead">Todos os planos incluem musculação e aulas coletivas. Quanto maior o plano, menor a mensalidade.</p>
    <div class="plans">
-    <div class="plan"><h3>Mensal</h3><div class="price">R$ 129<small>/mês</small></div><p>Sem fidelidade.</p>
-     <ul><li>Musculação livre</li><li>Aulas coletivas</li><li>Avaliação física inicial</li></ul></div>
-    <div class="plan best"><h3>Trimestral</h3><div class="price">R$ 109<small>/mês</small></div><p>O mais escolhido.</p>
-     <ul><li>Tudo do plano Mensal</li><li>1 reavaliação física</li><li>Traga um amigo 2x por mês</li></ul></div>
-    <div class="plan"><h3>Anual</h3><div class="price">R$ 89<small>/mês</small></div><p>Menor preço por mês.</p>
-     <ul><li>Tudo do plano Trimestral</li><li>Matrícula grátis</li><li>Trancamento de até 30 dias</li></ul></div>
+    <div class="plan">
+     <h3>Mensal</h3><div class="price">R$ 129<small>/mês</small></div><p>Sem fidelidade.</p>
+     <ul><li>Musculação livre</li><li>Aulas coletivas</li><li>Avaliação física inicial</li></ul>
+     <button type="button" class="btn plan-cta" data-ask="Quero saber mais sobre o plano Mensal">Quero este plano</button>
+    </div>
+    <div class="plan best">
+     <span class="ribbon">Mais escolhido</span>
+     <h3>Trimestral</h3><div class="price">R$ 109<small>/mês</small></div><p>O equilíbrio entre preço e flexibilidade.</p>
+     <ul><li>Tudo do plano Mensal</li><li>1 reavaliação física</li><li>Traga um amigo 2x por mês</li></ul>
+     <button type="button" class="btn plan-cta" data-ask="Quero saber mais sobre o plano Trimestral">Quero este plano</button>
+    </div>
+    <div class="plan">
+     <h3>Anual</h3><div class="price">R$ 89<small>/mês</small></div><p>Menor preço por mês.</p>
+     <ul><li>Tudo do plano Trimestral</li><li>Matrícula grátis</li><li>Melhor custo-benefício</li></ul>
+     <button type="button" class="btn plan-cta" data-ask="Quero saber mais sobre o plano Anual">Quero este plano</button>
+    </div>
    </div>
-   <p class="note">Valores fictícios, apenas para demonstração. Matrícula: R$ 59 nos planos Mensal e Trimestral.</p>
+   <p class="note">Matrícula: R$ 59 nos planos Mensal e Trimestral.</p>
+  </div>
+ </section>
+
+ <section id="modalidades" class="tight">
+  <div class="wrap reveal">
+   <p class="kicker">03 · Aulas</p>
+   <h2>Aulas e modalidades</h2>
+   <p class="lead">Seis opções para quem quer suar, aprender uma luta, relaxar ou treinar em família. Todas as aulas estão incluídas no plano.</p>
+   <div class="mods">
+    <article class="mod">
+     <div class="mod-top"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="M6 16l4-8h5l3 8M10 8H8M13 12H8"/></svg></span><span class="dur">45 min</span></div>
+     <h3>RGC Bike</h3>
+     <p class="goal"><b>Objetivo:</b> condicionamento cardiovascular e queima calórica.</p>
+     <ul><li>Melhora o fôlego e a resistência</li><li>Alto gasto de calorias</li><li>Baixo impacto nas articulações</li></ul>
+    </article>
+    <article class="mod">
+     <div class="mod-top"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="16" r="2"/></svg></span><span class="dur">50 min</span></div>
+     <h3>FitDance</h3>
+     <p class="goal"><b>Objetivo:</b> emagrecimento com diversão.</p>
+     <ul><li>Trabalha o corpo todo ao ritmo da música</li><li>Melhora a coordenação motora</li><li>Ajuda a aliviar o estresse</li></ul>
+    </article>
+    <article class="mod">
+     <div class="mod-top"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9.5h.01M15 9.5h.01"/></svg></span><span class="dur">40 min</span></div>
+     <h3>RGC Kids</h3>
+     <p class="goal"><b>Objetivo:</b> fortalecimento muscular e hábito de movimento.</p>
+     <ul><li>Fortalece músculos e ossos</li><li>Desenvolve postura e equilíbrio</li><li>Estimula disciplina e socialização</li></ul>
+    </article>
+    <article class="mod">
+     <div class="mod-top"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 11V7a3 3 0 0 1 3-3h4a4 4 0 0 1 4 4v6a6 6 0 0 1-6 6h-1a4 4 0 0 1-4-4z"/><path d="M7 14h6"/></svg></span><span class="dur">60 min</span></div>
+     <h3>Boxe</h3>
+     <p class="goal"><b>Objetivo:</b> condicionamento físico e definição muscular.</p>
+     <ul><li>Melhora a resistência e a agilidade</li><li>Tonifica braços, ombros e abdômen</li><li>Descarrega a tensão do dia</li></ul>
+    </article>
+    <article class="mod">
+     <div class="mod-top"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span><span class="dur">60 min</span></div>
+     <h3>Muay Thai</h3>
+     <p class="goal"><b>Objetivo:</b> força, potência e autodefesa.</p>
+     <ul><li>Fortalece pernas e core</li><li>Aumenta o gasto calórico</li><li>Desenvolve disciplina e confiança</li></ul>
+    </article>
+    <article class="mod">
+     <div class="mod-top"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><path d="M12 8v5M6 20c2-4 4-5 6-5s4 1 6 5M5 12c3 0 5 1 7 1s4-1 7-1"/></svg></span><span class="dur">60 min</span></div>
+     <h3>Yoga</h3>
+     <p class="goal"><b>Objetivo:</b> flexibilidade, equilíbrio e relaxamento.</p>
+     <ul><li>Aumenta a flexibilidade e a mobilidade</li><li>Melhora a postura e a respiração</li><li>Reduz o estresse e melhora o sono</li></ul>
+    </article>
+   </div>
+   <p class="note">Horários das turmas na recepção ou pelo <button type="button" class="linklike" data-ask="Qual o horário das aulas?">chat</button>.</p>
   </div>
  </section>
 
  <section class="diff" id="diferenciais">
-  <div class="wrap">
+  <div class="wrap reveal">
+   <p class="kicker">04 · Diferenciais</p>
    <h2>Por que a RGC</h2>
    <p class="lead">O que você encontra aqui e dificilmente encontra em outra academia.</p>
    <div class="diffs">
-    <div><h3>Personal trainer</h3><p>Acompanhamento individual com profissionais formados, sob agendamento.</p></div>
-    <div><h3>Aulas para todo nível</h3><p>Funcional, spinning, yoga e dança, com turmas pequenas e horários ao longo do dia.</p></div>
-    <div><h3>Equipamentos novos</h3><p>Máquinas renovadas e manutenção semanal, sem fila nos horários de pico.</p></div>
-    <div><h3>Atendimento 24h no chat</h3><p>Dúvidas sobre horários, planos e cancelamento respondidas na hora pelo nosso assistente.</p></div>
+    <div><span class="num">01</span><h3>Personal trainer</h3><p>Acompanhamento individual com personal trainers credenciados. O valor é combinado direto com o profissional.</p></div>
+    <div><span class="num">02</span><h3>Aulas para todo nível</h3><p>Da bike ao muay thai, do yoga ao RGC Kids, com turmas pequenas e horários ao longo do dia.</p></div>
+    <div><span class="num">03</span><h3>Equipamentos novos</h3><p>Máquinas renovadas e manutenção semanal, sem fila nos horários de pico.</p></div>
+    <div><span class="num">04</span><h3>Atendimento 24h no chat</h3><p>Dúvidas sobre horários, planos e cancelamento respondidas na hora pelo nosso assistente.</p></div>
    </div>
   </div>
  </section>
 
  <section id="contato">
-  <div class="wrap contact">
+  <div class="wrap contact reveal">
    <div>
+    <p class="kicker">05 · Contato</p>
     <h2>Fale conosco</h2>
     <p class="lead">Passe na recepção ou chame no chat. Respondemos rápido.</p>
     <dl>
-     <div><dt>Endereço</dt><dd>Av. Exemplo, 1200, Centro<br>Palhoça, SC, 88130-000</dd></div>
-     <div><dt>Telefone / WhatsApp</dt><dd>(48) 3000-0000</dd></div>
-     <div><dt>E-mail</dt><dd>contato@rgctraining.example</dd></div>
+     <div><dt>Endereço</dt><dd>Av. Pedra Branca, 25 - Cidade Universitária<br>Palhoça - SC, 88137-270</dd></div>
+     <div><dt>Telefone / WhatsApp</dt><dd><a data-contact="phone" href="#">(48) 4002-8922</a></dd></div>
+     <div><dt>E-mail</dt><dd><a data-contact="email" href="#">contato@rgctraining.com</a></dd></div>
     </dl>
+    <div class="cta">
+     <a class="btn main" data-contact="whatsapp" href="#">WhatsApp</a>
+     <a class="btn ghost" data-contact="call" href="#">Ligar</a>
+    </div>
    </div>
-  <div class="map">
-  <iframe 
-    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3534.629392212903!2d-48.67389862354784!3d-27.64139702829285!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x952733475294e50d%3A0x6a23a3cb02a2080c!2sUniSul%20-%20Campus%20Pedra%20Branca!5e0!3m2!1spt-BR!2sbr!4v1710000000000!5m2!1spt-BR!2sbr" 
-    width="100%" 
-    height="260" 
-    style="border:0; border-radius:10px;" 
-    allowfullscreen="" 
-    loading="lazy" 
-    referrerpolicy="no-referrer-when-downgrade">
-  </iframe>
-  </div>
+   <iframe class="map" title="Mapa da Academia RGC Training" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3535.0142270348515!2d-48.68415457453569!3d-27.62407602623037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9527357862dd53f3%3A0x9e3964377eda962f!2sUniSul%20Pedra%20Branca!5e0!3m2!1spt-BR!2sbr!4v1791201293022!5m2!1spt-BR!2sbr" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
   </div>
  </section>
 </main>
 
-<footer><div class="wrap">© 2026 Academia RGC Training. Projeto acadêmico fictício (A3 – Inteligência Artificial).</div></footer>
+<footer><div class="wrap">© <span id="year">2026</span> Academia RGC Training. Projeto acadêmico (A3 – Inteligência Artificial).</div></footer>
 
 <!-- ---------- Chatbot ---------- -->
-<button id="fab" aria-controls="chat" aria-expanded="false">
+<button id="fab" type="button" aria-controls="chat" aria-expanded="false">
  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 20l1-4.9A8 8 0 1 1 21 12z"/></svg>
  <span>Fale com a gente</span>
 </button>
 
 <div id="chat" role="dialog" aria-label="Chat de atendimento">
  <div class="ch-head">
-  <div><b>Assistente RGC</b><small>Respostas automáticas</small></div>
-  <button id="close" aria-label="Fechar chat">×</button>
+  <span class="avatar" aria-hidden="true">R</span>
+  <div class="ch-title"><b>Assistente RGC</b><small id="ch-status" class="ch-status on">Online</small></div>
+  <button id="new" type="button" aria-label="Nova conversa" title="Nova conversa">
+   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+  </button>
+  <button id="close" type="button" aria-label="Fechar chat">×</button>
  </div>
+ <p id="ch-banner" class="ch-banner" hidden>O atendimento automático está fora do ar. Fale com a equipe pelo telefone ou WhatsApp.</p>
  <div id="msgs" aria-live="polite"></div>
  <form class="ch-form" id="form">
-  <input id="in" type="text" placeholder="Digite sua dúvida…" autocomplete="off" maxlength="300" aria-label="Mensagem">
+  <div class="field">
+   <input id="in" type="text" placeholder="Digite sua dúvida…" autocomplete="off" maxlength="300" aria-label="Mensagem">
+   <span id="count" class="count" aria-hidden="true"></span>
+  </div>
   <button id="send" type="submit">Enviar</button>
  </form>
 </div>
 
-<script>
-/* ===== Configuração =====*/
-const API_URL = '/api/chat';
-
-/* ===== Status de funcionamento (usa o relógio do visitante) ===== */
-const SCHEDULE = {0:[8,14],1:[5.5,23],2:[5.5,23],3:[5.5,23],4:[5.5,23],5:[5.5,23],6:[7,19]};
-const fmt = h => { const m = Math.round((h % 1) * 60); return String(Math.floor(h)).padStart(2,'0') + 'h' + (m ? String(m).padStart(2,'0') : ''); };
-(function status(){
-  const now = new Date(), d = now.getDay(), h = now.getHours() + now.getMinutes()/60;
-  const [o, c] = SCHEDULE[d], open = h >= o && h < c;
-  document.getElementById('today').classList.toggle('open', open);
-  document.getElementById('st').textContent = open ? 'Aberto agora' : 'Fechado agora';
-  document.getElementById('st2').textContent = open ? 'Hoje até ' + fmt(c) + '.'
-    : (h < o ? 'Abrimos hoje às ' + fmt(o) + '.' : 'Abrimos amanhã às ' + fmt(SCHEDULE[(d+1)%7][0]) + '.');
-  document.querySelectorAll('#hours div').forEach(el => {
-    if (el.dataset.d.split(',').includes(String(d))) el.classList.add('now');
-  });
-})();
-
-/* ===== Chat ===== */
-const $ = id => document.getElementById(id);
-const chat = $('chat'), msgs = $('msgs'), input = $('in'), send = $('send');
-const sessionId = 'web-' + Math.random().toString(36).slice(2, 10);
-let started = false;
-
-function toggle(show){
-  chat.classList.toggle('show', show);
-  $('fab').setAttribute('aria-expanded', show);
-  if (show){
-    input.focus();
-    if (!started){
-      started = true;
-      add('Olá! Sou o assistente da RGC Training. Posso ajudar com horários, planos, personal trainer, aulas e cancelamento.', 'bot');
-      const chips = document.createElement('div'); chips.className = 'chips';
-      ['Qual o horário de funcionamento?', 'Quais são os planos?', 'Tem personal trainer?', 'Quais aulas vocês têm?'].forEach(t => {
-        const b = document.createElement('button'); b.type = 'button'; b.textContent = t;
-        b.onclick = () => { chips.remove(); ask(t); }; chips.appendChild(b);
-      });
-      msgs.appendChild(chips);
-    }
-  }
-}
-$('fab').onclick = () => toggle(!chat.classList.contains('show'));
-$('close').onclick = () => { toggle(false); $('fab').focus(); };
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && chat.classList.contains('show')) toggle(false); });
-
-function add(text, who, extra){
-  const el = document.createElement('div');
-  el.className = 'm ' + who + (extra ? ' ' + extra : '');
-  el.textContent = text;           // textContent: evita injeção de HTML
-  msgs.appendChild(el);
-  msgs.scrollTop = msgs.scrollHeight;
-  return el;
-}
-
-async function ask(text){
-  add(text, 'me');
-  send.disabled = true;
-  const wait = add('Digitando…', 'bot', 'typing');
-  try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ sessionId, mensagem: text })
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    wait.remove();
-    add(data.resposta, 'bot', data.fallback ? 'fb' : '');
-  } catch (e) {
-    wait.remove();
-    add('Não consegui falar com o servidor agora. Tente novamente em instantes ou ligue para (48) 3000-0000.', 'bot', 'err');
-    console.error('Erro ao chamar', API_URL, e);
-  } finally {
-    send.disabled = false;
-    input.focus();
-  }
-}
-
-$('form').addEventListener('submit', e => {
-  e.preventDefault();
-  const t = input.value.trim();
-  if (!t) return;
-  input.value = '';
-  document.querySelectorAll('.chips').forEach(c => c.remove());
-  ask(t);
-});
-</script>
+<script src="js/config.js"></script>
+<script src="js/schedule.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/ui.js"></script>
 </body>
 </html>
