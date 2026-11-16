@@ -4,7 +4,7 @@
 -- as permissões continuam). Roda em uma transação: se der erro, nada é gravado.
 -- ATENÇÃO: o TRUNCATE abaixo também apaga as conversas. Em produção, prefira
 -- scripts incrementais (só INSERT/UPDATE).
--- Base: 43 intents, 85 respostas, 1276 frases de treino, 143 casos de teste.
+-- Base: 49 intents, 97 respostas, 1276 frases de treino, 143 casos de teste.
 
 BEGIN;
 
@@ -122,7 +122,13 @@ INSERT INTO intents (codigo, categoria, descricao) VALUES
     ('modalidades_nao_oferecidas', 'operacional', 'Modalidades que a RGC não oferece (pilates, crossfit, natação)'),
     ('aula_bike', 'operacional', 'Aula RGC Bike (bike/spinning): objetivo, duração e benefícios'),
     ('equipamentos', 'operacional', 'Equipamentos e aparelhos: renovação, manutenção e fila em horário de pico'),
-    ('horario_fim_semana_feriado', 'operacional', 'Horário aos sábados, domingos e feriados');
+    ('horario_fim_semana_feriado', 'operacional', 'Horário aos sábados, domingos e feriados'),
+    ('crianca_boxe', 'operacional', 'Criança ou adolescente na aula de Boxe: idade mínima (14 anos) e indicação da RGC Kids'),
+    ('crianca_muay_thai', 'operacional', 'Criança ou adolescente na aula de Muay Thai: idade mínima (14 anos) e indicação da RGC Kids'),
+    ('crianca_lutas', 'operacional', 'Criança ou adolescente em aulas de luta (Boxe e Muay Thai): idade mínima (14 anos) e indicação da RGC Kids'),
+    ('crianca_bike', 'operacional', 'Criança ou adolescente na aula RGC Bike: idade mínima (14 anos) e indicação da RGC Kids'),
+    ('crianca_danca', 'operacional', 'Criança ou adolescente na aula FitDance: idade mínima (14 anos) e indicação da RGC Kids'),
+    ('crianca_yoga', 'operacional', 'Criança ou adolescente na aula de Yoga: idade mínima (14 anos) e indicação da RGC Kids');
 
 -- =========================================================
 -- DADOS: RESPOSTAS DO BOT (ligadas pelo código da intent)
@@ -383,7 +389,31 @@ A musculação é livre e está incluída em todos os planos.'),
 • Domingo: fechado
 • Feriados: fechado
 De segunda a sexta o horário é das 6h às 22h.'),
-    (85, 'horario_fim_semana_feriado', 'No sábado funcionamos das 8h às 14h. Aos domingos e feriados a academia fica fechada. De segunda a sexta abrimos das 6h às 22h, então dá para treinar antes ou depois do trabalho.')
+    (85, 'horario_fim_semana_feriado', 'No sábado funcionamos das 8h às 14h. Aos domingos e feriados a academia fica fechada. De segunda a sexta abrimos das 6h às 22h, então dá para treinar antes ou depois do trabalho.'),
+
+    -- crianca_boxe (2)
+    (86, 'crianca_boxe', 'O Boxe é a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Para crianças mais novas, temos a RGC Kids: 40 minutos de atividade com foco em postura, equilíbrio e socialização. Os horários das turmas ficam na recepção ou no WhatsApp (48) 4002-8922.'),
+    (87, 'crianca_boxe', 'A partir dos 14 anos já dá para fazer Boxe: são 60 minutos que melhoram a resistência e a agilidade. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Se a criança for mais nova, a indicação é a RGC Kids, nossa aula infantil. Para horários, fale com a recepção ou chame no WhatsApp (48) 4002-8922.'),
+
+    -- crianca_muay_thai (2)
+    (88, 'crianca_muay_thai', 'O Muay Thai é a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Para crianças mais novas, temos a RGC Kids: 40 minutos de atividade com foco em postura, equilíbrio e socialização. Os horários das turmas ficam na recepção ou no WhatsApp (48) 4002-8922.'),
+    (89, 'crianca_muay_thai', 'A partir dos 14 anos já dá para fazer Muay Thai: são 60 minutos de força, autodefesa e disciplina. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Se a criança for mais nova, a indicação é a RGC Kids, nossa aula infantil. Para horários, fale com a recepção ou chame no WhatsApp (48) 4002-8922.'),
+
+    -- crianca_lutas (2)
+    (90, 'crianca_lutas', 'Nossas aulas de luta, Boxe e Muay Thai, são a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Para crianças mais novas, temos a RGC Kids: 40 minutos de atividade com foco em postura, equilíbrio e socialização. Os horários das turmas ficam na recepção ou no WhatsApp (48) 4002-8922.'),
+    (91, 'crianca_lutas', 'Boxe e Muay Thai aceitam alunos a partir dos 14 anos e ajudam a desenvolver disciplina e confiança. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Se a criança for mais nova, a indicação é a RGC Kids, nossa aula infantil. Para horários, fale com a recepção ou chame no WhatsApp (48) 4002-8922.'),
+
+    -- crianca_bike (2)
+    (92, 'crianca_bike', 'A RGC Bike é a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Para crianças mais novas, temos a RGC Kids: 40 minutos de atividade com foco em postura, equilíbrio e socialização. Os horários das turmas ficam na recepção ou no WhatsApp (48) 4002-8922.'),
+    (93, 'crianca_bike', 'A partir dos 14 anos já dá para fazer RGC Bike: são 45 minutos para melhorar o fôlego, com baixo impacto nas articulações. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Se a criança for mais nova, a indicação é a RGC Kids, nossa aula infantil. Para horários, fale com a recepção ou chame no WhatsApp (48) 4002-8922.'),
+
+    -- crianca_danca (2)
+    (94, 'crianca_danca', 'A FitDance é a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Para crianças mais novas, temos a RGC Kids: 40 minutos de atividade com foco em postura, equilíbrio e socialização. Os horários das turmas ficam na recepção ou no WhatsApp (48) 4002-8922.'),
+    (95, 'crianca_danca', 'A partir dos 14 anos já dá para fazer FitDance: são 50 minutos de dança que melhoram a coordenação motora. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Se a criança for mais nova, a indicação é a RGC Kids, nossa aula infantil. Para horários, fale com a recepção ou chame no WhatsApp (48) 4002-8922.'),
+
+    -- crianca_yoga (2)
+    (96, 'crianca_yoga', 'O Yoga é a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Para crianças mais novas, temos a RGC Kids: 40 minutos de atividade com foco em postura, equilíbrio e socialização. Os horários das turmas ficam na recepção ou no WhatsApp (48) 4002-8922.'),
+    (97, 'crianca_yoga', 'A partir dos 14 anos já dá para fazer Yoga: são 60 minutos para ganhar flexibilidade, melhorar a postura e a respiração. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Se a criança for mais nova, a indicação é a RGC Kids, nossa aula infantil. Para horários, fale com a recepção ou chame no WhatsApp (48) 4002-8922.')
 ) AS v(ord, codigo, texto)
 JOIN intents i ON i.codigo = v.codigo
 ORDER BY v.ord;
