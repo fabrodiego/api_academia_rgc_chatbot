@@ -4,7 +4,7 @@
 -- as permissões continuam). Roda em uma transação: se der erro, nada é gravado.
 -- ATENÇÃO: o TRUNCATE abaixo também apaga as conversas. Em produção, prefira
 -- scripts incrementais (só INSERT/UPDATE).
--- Base: 43 intents, 85 respostas, 1273 frases de treino, 143 casos de teste.
+-- Base: 43 intents, 85 respostas, 1276 frases de treino, 143 casos de teste.
 
 BEGIN;
 
@@ -148,8 +148,8 @@ FROM (VALUES
     (9, 'agradecimento', 'Por nada! Fico feliz em ajudar. Se tiver mais alguma dúvida, é só perguntar.'),
 
     -- sobre_bot (2)
-    (10, 'sobre_bot', 'Eu sou um chatbot, um assistente automático da RGC Training. Respondo dúvidas sobre a academia a qualquer hora. Para casos mais específicos, chamo a equipe humana.'),
-    (11, 'sobre_bot', 'Sou o assistente virtual da RGC Training. Eu entendo a sua pergunta comparando com exemplos que aprendi (PLN com TF-IDF). Se eu não souber responder, encaminho para um atendente humano.'),
+    (10, 'sobre_bot', 'Eu sou o assistente automático da RGC Training. Respondo suas dúvidas sobre a academia a qualquer hora. Para casos mais específicos, chamo alguém da nossa equipe.'),
+    (11, 'sobre_bot', 'Sou o assistente virtual da RGC Training! Estou aqui para tirar suas dúvidas sobre planos, horários, aulas e estrutura da academia. Se eu não souber responder, chamo alguém da nossa equipe para te ajudar.'),
 
     -- atendimento_humano (1)
     (12, 'atendimento_humano', 'Claro! Para falar com uma pessoa da equipe, chame no WhatsApp (48) 4002-8922, ligue no mesmo número ou passe na recepção. Atendemos no horário de funcionamento da academia.'),
@@ -2796,7 +2796,12 @@ FROM (VALUES
     (1272, 'horario_fim_semana_feriado', 'domingo funciona', 'seed'),
 
     -- equipamentos (1)
-    (1273, 'equipamentos', 'maquinas novas', 'seed')
+    (1273, 'equipamentos', 'maquinas novas', 'seed'),
+
+    -- modalidades_nao_oferecidas (3): "cross fit" escrito separado
+    (1274, 'modalidades_nao_oferecidas', 'cross fit', 'seed'),
+    (1275, 'modalidades_nao_oferecidas', 'quero fazer cross fit', 'seed'),
+    (1276, 'modalidades_nao_oferecidas', 'tem aula de cross fit', 'seed')
 ) AS v(ord, codigo, texto, origem)
 JOIN intents i ON i.codigo = v.codigo
 ORDER BY v.ord;
