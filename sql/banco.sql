@@ -4,7 +4,7 @@
 -- as permissões continuam). Roda em uma transação: se der erro, nada é gravado.
 -- ATENÇÃO: o TRUNCATE abaixo também apaga as conversas. Em produção, prefira
 -- scripts incrementais (só INSERT/UPDATE).
--- Base: 49 intents, 97 respostas, 1276 frases de treino, 143 casos de teste.
+-- Base: 49 intents, 97 respostas, 1377 frases de treino, 143 casos de teste.
 
 BEGIN;
 
@@ -2831,7 +2831,120 @@ FROM (VALUES
     -- modalidades_nao_oferecidas (3): "cross fit" escrito separado
     (1274, 'modalidades_nao_oferecidas', 'cross fit', 'seed'),
     (1275, 'modalidades_nao_oferecidas', 'quero fazer cross fit', 'seed'),
-    (1276, 'modalidades_nao_oferecidas', 'tem aula de cross fit', 'seed')
+    (1276, 'modalidades_nao_oferecidas', 'tem aula de cross fit', 'seed'),
+
+    -- crianca_boxe (16)
+    (1277, 'crianca_boxe', 'meu filho pode fazer boxe', 'seed'),
+    (1278, 'crianca_boxe', 'minha filha pode fazer boxe', 'seed'),
+    (1279, 'crianca_boxe', 'crianca pode fazer boxe', 'seed'),
+    (1280, 'crianca_boxe', 'criancas podem treinar boxe', 'seed'),
+    (1281, 'crianca_boxe', 'tem boxe infantil', 'seed'),
+    (1282, 'crianca_boxe', 'boxe para criancas', 'seed'),
+    (1283, 'crianca_boxe', 'boxe kids', 'seed'),
+    (1284, 'crianca_boxe', 'com quantos anos pode fazer boxe', 'seed'),
+    (1285, 'crianca_boxe', 'idade minima para boxe', 'seed'),
+    (1286, 'crianca_boxe', 'meu filho de 10 anos pode fazer boxe', 'seed'),
+    (1287, 'crianca_boxe', 'adolescente pode fazer boxe', 'seed'),
+    (1288, 'crianca_boxe', 'menor de idade pode fazer boxe', 'seed'),
+    (1289, 'crianca_boxe', 'quero colocar meu filho na aula de boxe', 'seed'),
+    (1290, 'crianca_boxe', 'a partir de que idade pode fazer boxe', 'seed'),
+    (1291, 'crianca_boxe', 'minha filha de 12 anos pode treinar boxe', 'seed'),
+    (1292, 'crianca_boxe', 'aula de boxe para crianca', 'seed'),
+
+    -- crianca_muay_thai (16)
+    (1293, 'crianca_muay_thai', 'meu filho pode fazer muay thai', 'seed'),
+    (1294, 'crianca_muay_thai', 'minha filha pode fazer muay thai', 'seed'),
+    (1295, 'crianca_muay_thai', 'crianca pode fazer muay thai', 'seed'),
+    (1296, 'crianca_muay_thai', 'criancas podem treinar muay thai', 'seed'),
+    (1297, 'crianca_muay_thai', 'tem muay thai infantil', 'seed'),
+    (1298, 'crianca_muay_thai', 'muay thai para criancas', 'seed'),
+    (1299, 'crianca_muay_thai', 'muay thai kids', 'seed'),
+    (1300, 'crianca_muay_thai', 'com quantos anos pode fazer muay thai', 'seed'),
+    (1301, 'crianca_muay_thai', 'idade minima para muay thai', 'seed'),
+    (1302, 'crianca_muay_thai', 'meu filho de 10 anos pode fazer muay thai', 'seed'),
+    (1303, 'crianca_muay_thai', 'adolescente pode fazer muay thai', 'seed'),
+    (1304, 'crianca_muay_thai', 'menor de idade pode fazer muay thai', 'seed'),
+    (1305, 'crianca_muay_thai', 'quero colocar meu filho na aula de muay thai', 'seed'),
+    (1306, 'crianca_muay_thai', 'a partir de que idade pode fazer muay thai', 'seed'),
+    (1307, 'crianca_muay_thai', 'minha filha de 12 anos pode treinar muay thai', 'seed'),
+    (1308, 'crianca_muay_thai', 'aula de muay thai para crianca', 'seed'),
+
+    -- crianca_lutas (19)
+    (1309, 'crianca_lutas', 'meu filho pode fazer luta', 'seed'),
+    (1310, 'crianca_lutas', 'minha filha pode fazer luta', 'seed'),
+    (1311, 'crianca_lutas', 'crianca pode fazer luta', 'seed'),
+    (1312, 'crianca_lutas', 'criancas podem aprender luta', 'seed'),
+    (1313, 'crianca_lutas', 'tem luta infantil', 'seed'),
+    (1314, 'crianca_lutas', 'luta para criancas', 'seed'),
+    (1315, 'crianca_lutas', 'luta kids', 'seed'),
+    (1316, 'crianca_lutas', 'com quantos anos pode fazer luta', 'seed'),
+    (1317, 'crianca_lutas', 'idade minima para luta', 'seed'),
+    (1318, 'crianca_lutas', 'meu filho de 10 anos pode fazer luta', 'seed'),
+    (1319, 'crianca_lutas', 'adolescente pode fazer luta', 'seed'),
+    (1320, 'crianca_lutas', 'menor de idade pode fazer luta', 'seed'),
+    (1321, 'crianca_lutas', 'quero colocar meu filho na aula de lutas', 'seed'),
+    (1322, 'crianca_lutas', 'a partir de que idade pode fazer lutas', 'seed'),
+    (1323, 'crianca_lutas', 'minha filha de 12 anos pode aprender lutas', 'seed'),
+    (1324, 'crianca_lutas', 'aula de lutas para crianca', 'seed'),
+    (1325, 'crianca_lutas', 'artes marciais para criancas', 'seed'),
+    (1326, 'crianca_lutas', 'meu filho pode lutar', 'seed'),
+    (1327, 'crianca_lutas', 'crianca pode lutar na academia', 'seed'),
+
+    -- crianca_bike (17)
+    (1328, 'crianca_bike', 'meu filho pode fazer bike', 'seed'),
+    (1329, 'crianca_bike', 'minha filha pode fazer bike', 'seed'),
+    (1330, 'crianca_bike', 'crianca pode fazer bike', 'seed'),
+    (1331, 'crianca_bike', 'criancas podem pedalar bike', 'seed'),
+    (1332, 'crianca_bike', 'tem bike infantil', 'seed'),
+    (1333, 'crianca_bike', 'bike para criancas', 'seed'),
+    (1334, 'crianca_bike', 'bike kids', 'seed'),
+    (1335, 'crianca_bike', 'com quantos anos pode fazer bike', 'seed'),
+    (1336, 'crianca_bike', 'idade minima para bike', 'seed'),
+    (1337, 'crianca_bike', 'meu filho de 10 anos pode fazer bike', 'seed'),
+    (1338, 'crianca_bike', 'adolescente pode fazer bike', 'seed'),
+    (1339, 'crianca_bike', 'menor de idade pode fazer bike', 'seed'),
+    (1340, 'crianca_bike', 'quero colocar meu filho na aula de spinning', 'seed'),
+    (1341, 'crianca_bike', 'a partir de que idade pode fazer spinning', 'seed'),
+    (1342, 'crianca_bike', 'minha filha de 12 anos pode pedalar spinning', 'seed'),
+    (1343, 'crianca_bike', 'aula de spinning para crianca', 'seed'),
+    (1344, 'crianca_bike', 'meu filho pode fazer rgc bike', 'seed'),
+
+    -- crianca_danca (17)
+    (1345, 'crianca_danca', 'meu filho pode fazer fitdance', 'seed'),
+    (1346, 'crianca_danca', 'minha filha pode fazer fitdance', 'seed'),
+    (1347, 'crianca_danca', 'crianca pode fazer fitdance', 'seed'),
+    (1348, 'crianca_danca', 'criancas podem dancar fitdance', 'seed'),
+    (1349, 'crianca_danca', 'tem fitdance infantil', 'seed'),
+    (1350, 'crianca_danca', 'fitdance para criancas', 'seed'),
+    (1351, 'crianca_danca', 'fitdance kids', 'seed'),
+    (1352, 'crianca_danca', 'com quantos anos pode fazer fitdance', 'seed'),
+    (1353, 'crianca_danca', 'idade minima para fitdance', 'seed'),
+    (1354, 'crianca_danca', 'meu filho de 10 anos pode fazer fitdance', 'seed'),
+    (1355, 'crianca_danca', 'adolescente pode fazer fitdance', 'seed'),
+    (1356, 'crianca_danca', 'menor de idade pode fazer fitdance', 'seed'),
+    (1357, 'crianca_danca', 'quero colocar meu filho na aula de danca', 'seed'),
+    (1358, 'crianca_danca', 'a partir de que idade pode fazer danca', 'seed'),
+    (1359, 'crianca_danca', 'minha filha de 12 anos pode dancar danca', 'seed'),
+    (1360, 'crianca_danca', 'aula de danca para crianca', 'seed'),
+    (1361, 'crianca_danca', 'minha filha pode fazer fit dance', 'seed'),
+
+    -- crianca_yoga (16)
+    (1362, 'crianca_yoga', 'meu filho pode fazer yoga', 'seed'),
+    (1363, 'crianca_yoga', 'minha filha pode fazer yoga', 'seed'),
+    (1364, 'crianca_yoga', 'crianca pode fazer yoga', 'seed'),
+    (1365, 'crianca_yoga', 'criancas podem praticar yoga', 'seed'),
+    (1366, 'crianca_yoga', 'tem yoga infantil', 'seed'),
+    (1367, 'crianca_yoga', 'yoga para criancas', 'seed'),
+    (1368, 'crianca_yoga', 'yoga kids', 'seed'),
+    (1369, 'crianca_yoga', 'com quantos anos pode fazer yoga', 'seed'),
+    (1370, 'crianca_yoga', 'idade minima para yoga', 'seed'),
+    (1371, 'crianca_yoga', 'meu filho de 10 anos pode fazer yoga', 'seed'),
+    (1372, 'crianca_yoga', 'adolescente pode fazer yoga', 'seed'),
+    (1373, 'crianca_yoga', 'menor de idade pode fazer yoga', 'seed'),
+    (1374, 'crianca_yoga', 'quero colocar meu filho na aula de ioga', 'seed'),
+    (1375, 'crianca_yoga', 'a partir de que idade pode fazer ioga', 'seed'),
+    (1376, 'crianca_yoga', 'minha filha de 12 anos pode praticar ioga', 'seed'),
+    (1377, 'crianca_yoga', 'aula de ioga para crianca', 'seed')
 ) AS v(ord, codigo, texto, origem)
 JOIN intents i ON i.codigo = v.codigo
 ORDER BY v.ord;
