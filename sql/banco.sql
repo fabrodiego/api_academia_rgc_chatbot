@@ -4,7 +4,7 @@
 -- as permissões continuam). Roda em uma transação: se der erro, nada é gravado.
 -- ATENÇÃO: o TRUNCATE abaixo também apaga as conversas. Em produção, prefira
 -- scripts incrementais (só INSERT/UPDATE).
--- Base: 49 intents, 97 respostas, 1377 frases de treino, 127 casos de teste.
+-- Base: 49 intents, 97 respostas, 1412 frases de treino, 127 casos de teste.
 
 BEGIN;
 
@@ -2944,7 +2944,54 @@ FROM (VALUES
     (1374, 'crianca_yoga', 'quero colocar meu filho na aula de ioga', 'seed'),
     (1375, 'crianca_yoga', 'a partir de que idade pode fazer ioga', 'seed'),
     (1376, 'crianca_yoga', 'minha filha de 12 anos pode praticar ioga', 'seed'),
-    (1377, 'crianca_yoga', 'aula de ioga para crianca', 'seed')
+    (1377, 'crianca_yoga', 'aula de ioga para crianca', 'seed'),
+
+    -- crianca_boxe: apelidos e menino/menina (3)
+    (1378, 'crianca_boxe', 'meu menino pode fazer boxe', 'seed'),
+    (1379, 'crianca_boxe', 'minha menina pode treinar boxe', 'seed'),
+    (1380, 'crianca_boxe', 'menino de 8 anos pode fazer boxe', 'seed'),
+
+    -- crianca_muay_thai: apelidos e menino/menina (3)
+    (1381, 'crianca_muay_thai', 'meu menino pode fazer muay thai', 'seed'),
+    (1382, 'crianca_muay_thai', 'minha menina pode treinar muay thai', 'seed'),
+    (1383, 'crianca_muay_thai', 'menino de 8 anos pode fazer muay thai', 'seed'),
+
+    -- crianca_lutas: apelidos e menino/menina (9)
+    (1384, 'crianca_lutas', 'meu filho pode fazer artes marciais', 'seed'),
+    (1385, 'crianca_lutas', 'meu filho de 10 anos pode fazer artes marciais', 'seed'),
+    (1386, 'crianca_lutas', 'crianca pode fazer artes marciais', 'seed'),
+    (1387, 'crianca_lutas', 'meu filho pode fazer lutas', 'seed'),
+    (1388, 'crianca_lutas', 'meu filho de 10 anos pode fazer lutas', 'seed'),
+    (1389, 'crianca_lutas', 'crianca pode fazer lutas', 'seed'),
+    (1390, 'crianca_lutas', 'meu menino pode fazer artes marciais', 'seed'),
+    (1391, 'crianca_lutas', 'minha menina pode lutar', 'seed'),
+    (1392, 'crianca_lutas', 'menino de 8 anos pode fazer artes marciais', 'seed'),
+
+    -- crianca_bike: apelidos e menino/menina (8)
+    (1393, 'crianca_bike', 'meu filho pode fazer spinning', 'seed'),
+    (1394, 'crianca_bike', 'meu filho de 10 anos pode fazer spinning', 'seed'),
+    (1395, 'crianca_bike', 'crianca pode fazer spinning', 'seed'),
+    (1396, 'crianca_bike', 'meu filho de 10 anos pode fazer rgc bike', 'seed'),
+    (1397, 'crianca_bike', 'crianca pode fazer rgc bike', 'seed'),
+    (1398, 'crianca_bike', 'meu menino pode fazer spinning', 'seed'),
+    (1399, 'crianca_bike', 'minha menina pode pedalar', 'seed'),
+    (1400, 'crianca_bike', 'menino de 8 anos pode fazer spinning', 'seed'),
+
+    -- crianca_danca: apelidos e menino/menina (6)
+    (1401, 'crianca_danca', 'meu filho pode fazer danca', 'seed'),
+    (1402, 'crianca_danca', 'meu filho de 10 anos pode fazer danca', 'seed'),
+    (1403, 'crianca_danca', 'crianca pode fazer danca', 'seed'),
+    (1404, 'crianca_danca', 'meu menino pode fazer danca', 'seed'),
+    (1405, 'crianca_danca', 'minha menina pode dancar na aula', 'seed'),
+    (1406, 'crianca_danca', 'menino de 8 anos pode fazer danca', 'seed'),
+
+    -- crianca_yoga: apelidos e menino/menina (6)
+    (1407, 'crianca_yoga', 'meu filho pode fazer ioga', 'seed'),
+    (1408, 'crianca_yoga', 'meu filho de 10 anos pode fazer ioga', 'seed'),
+    (1409, 'crianca_yoga', 'crianca pode fazer ioga', 'seed'),
+    (1410, 'crianca_yoga', 'meu menino pode fazer ioga', 'seed'),
+    (1411, 'crianca_yoga', 'minha menina pode praticar yoga', 'seed'),
+    (1412, 'crianca_yoga', 'menino de 8 anos pode fazer ioga', 'seed')
 ) AS v(ord, codigo, texto, origem)
 JOIN intents i ON i.codigo = v.codigo
 ORDER BY v.ord;
