@@ -183,7 +183,7 @@ FROM (VALUES
     (20, 'acesso_academia', 'A entrada é feita por biometria (digital) na catraca. O cadastro da digital é feito na recepção no dia da matrícula. Se a catraca não liberar, procure a recepção.'),
 
     -- idade_minima (1)
-    (21, 'idade_minima', 'Na musculação aceitamos alunos a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. A aula RGC Kids é voltada ao público infantil: pergunte na recepção sobre a faixa etária. Não há idade máxima: idosos são muito bem-vindos.'),
+    (21, 'idade_minima', 'Na musculação e em todas as aulas coletivas (RGC Bike, FitDance, Boxe, Muay Thai e Yoga) aceitamos alunos a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Para crianças mais novas, temos a RGC Kids: pergunte na recepção sobre a faixa etária. Não há idade máxima: idosos são muito bem-vindos.'),
 
     -- planos_valores (1)
     (22, 'planos_valores', 'Temos 3 planos, todos com musculação e aulas coletivas:
