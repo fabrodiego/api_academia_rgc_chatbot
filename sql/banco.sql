@@ -4,7 +4,7 @@
 -- as permissões continuam). Roda em uma transação: se der erro, nada é gravado.
 -- ATENÇÃO: o TRUNCATE abaixo também apaga as conversas. Em produção, prefira
 -- scripts incrementais (só INSERT/UPDATE).
--- Base: 49 intents, 97 respostas, 1377 frases de treino, 115 casos de teste.
+-- Base: 49 intents, 97 respostas, 1377 frases de treino, 127 casos de teste.
 
 BEGIN;
 
@@ -3068,6 +3068,20 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('Qual a raiz quadrada de 144?', NULL, 'fora_escopo'),
     ('Pode me ajudar com meu trabalho da faculdade?', NULL, 'fora_escopo'),
     ('Como faço para trocar o pneu do carro?', NULL, 'fora_escopo'),
-    ('?', NULL, 'fora_escopo');
+    ('?', NULL, 'fora_escopo'),
+
+    -- crianças por modalidade
+    ('Meu garoto de 11 anos quer fazer boxe, pode?', 'crianca_boxe', 'variacao'),
+    ('Criança treina boxe aí?', 'crianca_boxe', 'dificil'),
+    ('Minha filha de 15 anos pode fazer muay thai?', 'crianca_muay_thai', 'variacao'),
+    ('Muay thai aceita adolescente?', 'crianca_muay_thai', 'variacao'),
+    ('Meu filho pode aprender luta na academia?', 'crianca_lutas', 'variacao'),
+    ('Tem arte marcial para crianças?', 'crianca_lutas', 'dificil'),
+    ('Criança pode pedalar na RGC Bike?', 'crianca_bike', 'variacao'),
+    ('Meu filho de 9 anos pode fazer spinning?', 'crianca_bike', 'variacao'),
+    ('Minha filha pode dançar no FitDance?', 'crianca_danca', 'variacao'),
+    ('FitDance é liberado para menores?', 'crianca_danca', 'dificil'),
+    ('Meu filho de 13 anos pode fazer yoga?', 'crianca_yoga', 'variacao'),
+    ('Yoga serve para crianças?', 'crianca_yoga', 'dificil');
 
 COMMIT;
