@@ -4,7 +4,7 @@
 -- as permissões continuam). Roda em uma transação: se der erro, nada é gravado.
 -- ATENÇÃO: o TRUNCATE abaixo também apaga as conversas. Em produção, prefira
 -- scripts incrementais (só INSERT/UPDATE).
--- Base: 43 intents, 85 respostas, 1273 frases de treino, 143 casos de teste.
+-- Base: 43 intents, 85 respostas, 1276 frases de treino, 143 casos de teste.
 
 BEGIN;
 
@@ -2796,7 +2796,12 @@ FROM (VALUES
     (1272, 'horario_fim_semana_feriado', 'domingo funciona', 'seed'),
 
     -- equipamentos (1)
-    (1273, 'equipamentos', 'maquinas novas', 'seed')
+    (1273, 'equipamentos', 'maquinas novas', 'seed'),
+
+    -- modalidades_nao_oferecidas (3): "cross fit" escrito separado
+    (1274, 'modalidades_nao_oferecidas', 'cross fit', 'seed'),
+    (1275, 'modalidades_nao_oferecidas', 'quero fazer cross fit', 'seed'),
+    (1276, 'modalidades_nao_oferecidas', 'tem aula de cross fit', 'seed')
 ) AS v(ord, codigo, texto, origem)
 JOIN intents i ON i.codigo = v.codigo
 ORDER BY v.ord;
