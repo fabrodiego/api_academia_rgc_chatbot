@@ -45,23 +45,31 @@ public class ChatService {
     public record RespostaChat(String resposta, String intentDetectado, double score, boolean fallback) {}
 
     public RespostaChat responder(String sessionId, String mensagem) {
+        RespostaChat r = gerarResposta(mensagem);
+        if (!r.fallback()) {
+            ultimaIntentPorSessao.put(sessionId, r.intentDetectado());
+        }
+        registrarLog(sessionId, mensagem, r.intentDetectado(), r.score(), r.resposta());
+        return r;
+    }
+
+    /**
+     * Decide a resposta sem gravar nada (classificação + regra de fallback).
+     * É a mesma decisão do chat, usada também pelo executor de casos de teste.
+     */
+    public RespostaChat gerarResposta(String mensagem) {
         IntentClassifierService.Classificacao classificacao = classifierService.classificar(mensagem);
 
         boolean fallback = classificacao.intentCodigo() == null || classificacao.score() < limiarFallback;
-        String resposta;
-        String intentDetectado;
-
         if (fallback) {
-            resposta = RESPOSTA_FALLBACK;
-            intentDetectado = null;
-        } else {
-            intentDetectado = classificacao.intentCodigo();
-            resposta = buscarRespostaAleatoria(intentDetectado);
-            ultimaIntentPorSessao.put(sessionId, intentDetectado);
+            return new RespostaChat(RESPOSTA_FALLBACK, null, classificacao.score(), true);
         }
+        String intent = classificacao.intentCodigo();
+        return new RespostaChat(buscarRespostaAleatoria(intent), intent, classificacao.score(), false);
+    }
 
-        registrarLog(sessionId, mensagem, intentDetectado, classificacao.score(), resposta);
-        return new RespostaChat(resposta, intentDetectado, classificacao.score(), fallback);
+    public double getLimiarFallback() {
+        return limiarFallback;
     }
 
     private String buscarRespostaAleatoria(String intentCodigo) {
