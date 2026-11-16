@@ -148,8 +148,8 @@ FROM (VALUES
     (9, 'agradecimento', 'Por nada! Fico feliz em ajudar. Se tiver mais alguma dúvida, é só perguntar.'),
 
     -- sobre_bot (2)
-    (10, 'sobre_bot', 'Eu sou um chatbot, um assistente automático da RGC Training. Respondo dúvidas sobre a academia a qualquer hora. Para casos mais específicos, chamo a equipe humana.'),
-    (11, 'sobre_bot', 'Sou o assistente virtual da RGC Training. Eu entendo a sua pergunta comparando com exemplos que aprendi (PLN com TF-IDF). Se eu não souber responder, encaminho para um atendente humano.'),
+    (10, 'sobre_bot', 'Eu sou o assistente automático da RGC Training. Respondo suas dúvidas sobre a academia a qualquer hora. Para casos mais específicos, chamo alguém da nossa equipe.'),
+    (11, 'sobre_bot', 'Sou o assistente virtual da RGC Training! Estou aqui para tirar suas dúvidas sobre planos, horários, aulas e estrutura da academia. Se eu não souber responder, chamo alguém da nossa equipe para te ajudar.'),
 
     -- atendimento_humano (1)
     (12, 'atendimento_humano', 'Claro! Para falar com uma pessoa da equipe, chame no WhatsApp (48) 4002-8922, ligue no mesmo número ou passe na recepção. Atendemos no horário de funcionamento da academia.'),
