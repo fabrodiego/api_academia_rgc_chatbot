@@ -64,7 +64,7 @@ A aplicação lê a configuração via variáveis de ambiente:
 | `DB_NAME`     | `academia_rgc_chatbot`     |
 | `DB_USER`     | —                          |
 | `DB_PASSWORD` | —                          |
-| `ADMIN_KEY`   | — (sem ela, `feedback` e `recarregar-modelo` ficam bloqueados) |
+| `ADMIN_KEY`   | — (sem ela, `feedback`, `recarregar-modelo` e `avaliacao` ficam bloqueados) |
 
 Nenhuma credencial é versionada no repositório.
 
@@ -110,6 +110,42 @@ Para recarregar o modelo após alterar `training_phrases` sem reiniciar a aplica
 curl -X POST http://localhost:8080/api/chat/recarregar-modelo \
   -H "X-Admin-Key: <chave-dos-devs>"
 ```
+
+## Avaliação com os casos de teste
+
+A tabela `test_cases` guarda as perguntas de teste com a intenção esperada
+(`NULL` = o certo é cair no fallback) e o tipo (`padrao`, `variacao`,
+`dificil`, `fora_escopo`). O executor roda cada pergunta pela mesma decisão do
+`/api/chat` (sem gravar em `conversations`) e salva o resultado na própria
+tabela (`intent_obtida`, `score`, `resposta_obtida`, `resultado`, `executado_em`).
+
+Endpoints restritos (header `X-Admin-Key`):
+
+```bash
+# executa todos os casos e devolve as métricas
+curl -X POST http://localhost:8080/api/avaliacao -H "X-Admin-Key: <chave-dos-devs>"
+
+# métricas da última execução, sem rodar de novo
+curl http://localhost:8080/api/avaliacao -H "X-Admin-Key: <chave-dos-devs>"
+
+# planilha da última execução (CSV para Excel em pt-BR)
+curl http://localhost:8080/api/avaliacao/casos.csv -H "X-Admin-Key: <chave-dos-devs>" -o casos-de-teste.csv
+```
+
+Métricas devolvidas:
+
+| Campo | O que é |
+|---|---|
+| `acuracia` | Acertos / total. Critério estrito: intenção obtida igual à esperada |
+| `porTipo` | Acurácia separada por tipo de caso |
+| `taxaFallback` | Fração das perguntas que caíram no fallback |
+| `porClasse`, `precisaoMacro`, `recallMacro` | Precisão e recall por intenção e a média entre as intenções testadas. O fallback conta como a classe `(fallback)` |
+| `matrizConfusao` | `esperada → obtida → quantidade` |
+| `erros` | Casos que erraram, com intenção esperada, obtida e score |
+
+O usuário do banco precisa de permissão de `UPDATE` em `test_cases`.
+
+Testes automatizados do cálculo das métricas: `mvn test`.
 
 ## Aprendizado por feedback confirmado
 
