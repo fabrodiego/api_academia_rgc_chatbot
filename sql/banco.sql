@@ -4,7 +4,7 @@
 -- as permissões continuam). Roda em uma transação: se der erro, nada é gravado.
 -- ATENÇÃO: o TRUNCATE abaixo também apaga as conversas. Em produção, prefira
 -- scripts incrementais (só INSERT/UPDATE).
--- Base: 43 intents, 85 respostas, 1276 frases de treino, 143 casos de teste.
+-- Base: 49 intents, 97 respostas, 1412 frases de treino, 127 casos de teste.
 
 BEGIN;
 
@@ -122,7 +122,13 @@ INSERT INTO intents (codigo, categoria, descricao) VALUES
     ('modalidades_nao_oferecidas', 'operacional', 'Modalidades que a RGC não oferece (pilates, crossfit, natação)'),
     ('aula_bike', 'operacional', 'Aula RGC Bike (bike/spinning): objetivo, duração e benefícios'),
     ('equipamentos', 'operacional', 'Equipamentos e aparelhos: renovação, manutenção e fila em horário de pico'),
-    ('horario_fim_semana_feriado', 'operacional', 'Horário aos sábados, domingos e feriados');
+    ('horario_fim_semana_feriado', 'operacional', 'Horário aos sábados, domingos e feriados'),
+    ('crianca_boxe', 'operacional', 'Criança ou adolescente na aula de Boxe: idade mínima (14 anos) e indicação da RGC Kids'),
+    ('crianca_muay_thai', 'operacional', 'Criança ou adolescente na aula de Muay Thai: idade mínima (14 anos) e indicação da RGC Kids'),
+    ('crianca_lutas', 'operacional', 'Criança ou adolescente em aulas de luta (Boxe e Muay Thai): idade mínima (14 anos) e indicação da RGC Kids'),
+    ('crianca_bike', 'operacional', 'Criança ou adolescente na aula RGC Bike: idade mínima (14 anos) e indicação da RGC Kids'),
+    ('crianca_danca', 'operacional', 'Criança ou adolescente na aula FitDance: idade mínima (14 anos) e indicação da RGC Kids'),
+    ('crianca_yoga', 'operacional', 'Criança ou adolescente na aula de Yoga: idade mínima (14 anos) e indicação da RGC Kids');
 
 -- =========================================================
 -- DADOS: RESPOSTAS DO BOT (ligadas pelo código da intent)
@@ -177,7 +183,7 @@ FROM (VALUES
     (20, 'acesso_academia', 'A entrada é feita por biometria (digital) na catraca. O cadastro da digital é feito na recepção no dia da matrícula. Se a catraca não liberar, procure a recepção.'),
 
     -- idade_minima (1)
-    (21, 'idade_minima', 'Na musculação aceitamos alunos a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. A aula RGC Kids é voltada ao público infantil: pergunte na recepção sobre a faixa etária. Não há idade máxima: idosos são muito bem-vindos.'),
+    (21, 'idade_minima', 'Na musculação e em todas as aulas coletivas (RGC Bike, FitDance, Boxe, Muay Thai e Yoga) aceitamos alunos a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Para crianças mais novas, temos a RGC Kids: pergunte na recepção sobre a faixa etária. Não há idade máxima: idosos são muito bem-vindos.'),
 
     -- planos_valores (1)
     (22, 'planos_valores', 'Temos 3 planos, todos com musculação e aulas coletivas:
@@ -383,7 +389,31 @@ A musculação é livre e está incluída em todos os planos.'),
 • Domingo: fechado
 • Feriados: fechado
 De segunda a sexta o horário é das 6h às 22h.'),
-    (85, 'horario_fim_semana_feriado', 'No sábado funcionamos das 8h às 14h. Aos domingos e feriados a academia fica fechada. De segunda a sexta abrimos das 6h às 22h, então dá para treinar antes ou depois do trabalho.')
+    (85, 'horario_fim_semana_feriado', 'No sábado funcionamos das 8h às 14h. Aos domingos e feriados a academia fica fechada. De segunda a sexta abrimos das 6h às 22h, então dá para treinar antes ou depois do trabalho.'),
+
+    -- crianca_boxe (2)
+    (86, 'crianca_boxe', 'O Boxe é a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Para crianças mais novas, temos a RGC Kids: 40 minutos de atividade com foco em postura, equilíbrio e socialização. Os horários das turmas ficam na recepção ou no WhatsApp (48) 4002-8922.'),
+    (87, 'crianca_boxe', 'A partir dos 14 anos já dá para fazer Boxe: são 60 minutos que melhoram a resistência e a agilidade. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Se a criança for mais nova, a indicação é a RGC Kids, nossa aula infantil. Para horários, fale com a recepção ou chame no WhatsApp (48) 4002-8922.'),
+
+    -- crianca_muay_thai (2)
+    (88, 'crianca_muay_thai', 'O Muay Thai é a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Para crianças mais novas, temos a RGC Kids: 40 minutos de atividade com foco em postura, equilíbrio e socialização. Os horários das turmas ficam na recepção ou no WhatsApp (48) 4002-8922.'),
+    (89, 'crianca_muay_thai', 'A partir dos 14 anos já dá para fazer Muay Thai: são 60 minutos de força, autodefesa e disciplina. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Se a criança for mais nova, a indicação é a RGC Kids, nossa aula infantil. Para horários, fale com a recepção ou chame no WhatsApp (48) 4002-8922.'),
+
+    -- crianca_lutas (2)
+    (90, 'crianca_lutas', 'Nossas aulas de luta, Boxe e Muay Thai, são a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Para crianças mais novas, temos a RGC Kids: 40 minutos de atividade com foco em postura, equilíbrio e socialização. Os horários das turmas ficam na recepção ou no WhatsApp (48) 4002-8922.'),
+    (91, 'crianca_lutas', 'Boxe e Muay Thai aceitam alunos a partir dos 14 anos e ajudam a desenvolver disciplina e confiança. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Se a criança for mais nova, a indicação é a RGC Kids, nossa aula infantil. Para horários, fale com a recepção ou chame no WhatsApp (48) 4002-8922.'),
+
+    -- crianca_bike (2)
+    (92, 'crianca_bike', 'A RGC Bike é a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Para crianças mais novas, temos a RGC Kids: 40 minutos de atividade com foco em postura, equilíbrio e socialização. Os horários das turmas ficam na recepção ou no WhatsApp (48) 4002-8922.'),
+    (93, 'crianca_bike', 'A partir dos 14 anos já dá para fazer RGC Bike: são 45 minutos para melhorar o fôlego, com baixo impacto nas articulações. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Se a criança for mais nova, a indicação é a RGC Kids, nossa aula infantil. Para horários, fale com a recepção ou chame no WhatsApp (48) 4002-8922.'),
+
+    -- crianca_danca (2)
+    (94, 'crianca_danca', 'A FitDance é a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Para crianças mais novas, temos a RGC Kids: 40 minutos de atividade com foco em postura, equilíbrio e socialização. Os horários das turmas ficam na recepção ou no WhatsApp (48) 4002-8922.'),
+    (95, 'crianca_danca', 'A partir dos 14 anos já dá para fazer FitDance: são 50 minutos de dança que melhoram a coordenação motora. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Se a criança for mais nova, a indicação é a RGC Kids, nossa aula infantil. Para horários, fale com a recepção ou chame no WhatsApp (48) 4002-8922.'),
+
+    -- crianca_yoga (2)
+    (96, 'crianca_yoga', 'O Yoga é a partir de 14 anos. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Para crianças mais novas, temos a RGC Kids: 40 minutos de atividade com foco em postura, equilíbrio e socialização. Os horários das turmas ficam na recepção ou no WhatsApp (48) 4002-8922.'),
+    (97, 'crianca_yoga', 'A partir dos 14 anos já dá para fazer Yoga: são 60 minutos para ganhar flexibilidade, melhorar a postura e a respiração. Menores de 18 precisam de autorização assinada pelo responsável na matrícula. Se a criança for mais nova, a indicação é a RGC Kids, nossa aula infantil. Para horários, fale com a recepção ou chame no WhatsApp (48) 4002-8922.')
 ) AS v(ord, codigo, texto)
 JOIN intents i ON i.codigo = v.codigo
 ORDER BY v.ord;
@@ -2801,7 +2831,167 @@ FROM (VALUES
     -- modalidades_nao_oferecidas (3): "cross fit" escrito separado
     (1274, 'modalidades_nao_oferecidas', 'cross fit', 'seed'),
     (1275, 'modalidades_nao_oferecidas', 'quero fazer cross fit', 'seed'),
-    (1276, 'modalidades_nao_oferecidas', 'tem aula de cross fit', 'seed')
+    (1276, 'modalidades_nao_oferecidas', 'tem aula de cross fit', 'seed'),
+
+    -- crianca_boxe (16)
+    (1277, 'crianca_boxe', 'meu filho pode fazer boxe', 'seed'),
+    (1278, 'crianca_boxe', 'minha filha pode fazer boxe', 'seed'),
+    (1279, 'crianca_boxe', 'crianca pode fazer boxe', 'seed'),
+    (1280, 'crianca_boxe', 'criancas podem treinar boxe', 'seed'),
+    (1281, 'crianca_boxe', 'tem boxe infantil', 'seed'),
+    (1282, 'crianca_boxe', 'boxe para criancas', 'seed'),
+    (1283, 'crianca_boxe', 'boxe kids', 'seed'),
+    (1284, 'crianca_boxe', 'com quantos anos pode fazer boxe', 'seed'),
+    (1285, 'crianca_boxe', 'idade minima para boxe', 'seed'),
+    (1286, 'crianca_boxe', 'meu filho de 10 anos pode fazer boxe', 'seed'),
+    (1287, 'crianca_boxe', 'adolescente pode fazer boxe', 'seed'),
+    (1288, 'crianca_boxe', 'menor de idade pode fazer boxe', 'seed'),
+    (1289, 'crianca_boxe', 'quero colocar meu filho na aula de boxe', 'seed'),
+    (1290, 'crianca_boxe', 'a partir de que idade pode fazer boxe', 'seed'),
+    (1291, 'crianca_boxe', 'minha filha de 12 anos pode treinar boxe', 'seed'),
+    (1292, 'crianca_boxe', 'aula de boxe para crianca', 'seed'),
+
+    -- crianca_muay_thai (16)
+    (1293, 'crianca_muay_thai', 'meu filho pode fazer muay thai', 'seed'),
+    (1294, 'crianca_muay_thai', 'minha filha pode fazer muay thai', 'seed'),
+    (1295, 'crianca_muay_thai', 'crianca pode fazer muay thai', 'seed'),
+    (1296, 'crianca_muay_thai', 'criancas podem treinar muay thai', 'seed'),
+    (1297, 'crianca_muay_thai', 'tem muay thai infantil', 'seed'),
+    (1298, 'crianca_muay_thai', 'muay thai para criancas', 'seed'),
+    (1299, 'crianca_muay_thai', 'muay thai kids', 'seed'),
+    (1300, 'crianca_muay_thai', 'com quantos anos pode fazer muay thai', 'seed'),
+    (1301, 'crianca_muay_thai', 'idade minima para muay thai', 'seed'),
+    (1302, 'crianca_muay_thai', 'meu filho de 10 anos pode fazer muay thai', 'seed'),
+    (1303, 'crianca_muay_thai', 'adolescente pode fazer muay thai', 'seed'),
+    (1304, 'crianca_muay_thai', 'menor de idade pode fazer muay thai', 'seed'),
+    (1305, 'crianca_muay_thai', 'quero colocar meu filho na aula de muay thai', 'seed'),
+    (1306, 'crianca_muay_thai', 'a partir de que idade pode fazer muay thai', 'seed'),
+    (1307, 'crianca_muay_thai', 'minha filha de 12 anos pode treinar muay thai', 'seed'),
+    (1308, 'crianca_muay_thai', 'aula de muay thai para crianca', 'seed'),
+
+    -- crianca_lutas (19)
+    (1309, 'crianca_lutas', 'meu filho pode fazer luta', 'seed'),
+    (1310, 'crianca_lutas', 'minha filha pode fazer luta', 'seed'),
+    (1311, 'crianca_lutas', 'crianca pode fazer luta', 'seed'),
+    (1312, 'crianca_lutas', 'criancas podem aprender luta', 'seed'),
+    (1313, 'crianca_lutas', 'tem luta infantil', 'seed'),
+    (1314, 'crianca_lutas', 'luta para criancas', 'seed'),
+    (1315, 'crianca_lutas', 'luta kids', 'seed'),
+    (1316, 'crianca_lutas', 'com quantos anos pode fazer luta', 'seed'),
+    (1317, 'crianca_lutas', 'idade minima para luta', 'seed'),
+    (1318, 'crianca_lutas', 'meu filho de 10 anos pode fazer luta', 'seed'),
+    (1319, 'crianca_lutas', 'adolescente pode fazer luta', 'seed'),
+    (1320, 'crianca_lutas', 'menor de idade pode fazer luta', 'seed'),
+    (1321, 'crianca_lutas', 'quero colocar meu filho na aula de lutas', 'seed'),
+    (1322, 'crianca_lutas', 'a partir de que idade pode fazer lutas', 'seed'),
+    (1323, 'crianca_lutas', 'minha filha de 12 anos pode aprender lutas', 'seed'),
+    (1324, 'crianca_lutas', 'aula de lutas para crianca', 'seed'),
+    (1325, 'crianca_lutas', 'artes marciais para criancas', 'seed'),
+    (1326, 'crianca_lutas', 'meu filho pode lutar', 'seed'),
+    (1327, 'crianca_lutas', 'crianca pode lutar na academia', 'seed'),
+
+    -- crianca_bike (17)
+    (1328, 'crianca_bike', 'meu filho pode fazer bike', 'seed'),
+    (1329, 'crianca_bike', 'minha filha pode fazer bike', 'seed'),
+    (1330, 'crianca_bike', 'crianca pode fazer bike', 'seed'),
+    (1331, 'crianca_bike', 'criancas podem pedalar bike', 'seed'),
+    (1332, 'crianca_bike', 'tem bike infantil', 'seed'),
+    (1333, 'crianca_bike', 'bike para criancas', 'seed'),
+    (1334, 'crianca_bike', 'bike kids', 'seed'),
+    (1335, 'crianca_bike', 'com quantos anos pode fazer bike', 'seed'),
+    (1336, 'crianca_bike', 'idade minima para bike', 'seed'),
+    (1337, 'crianca_bike', 'meu filho de 10 anos pode fazer bike', 'seed'),
+    (1338, 'crianca_bike', 'adolescente pode fazer bike', 'seed'),
+    (1339, 'crianca_bike', 'menor de idade pode fazer bike', 'seed'),
+    (1340, 'crianca_bike', 'quero colocar meu filho na aula de spinning', 'seed'),
+    (1341, 'crianca_bike', 'a partir de que idade pode fazer spinning', 'seed'),
+    (1342, 'crianca_bike', 'minha filha de 12 anos pode pedalar spinning', 'seed'),
+    (1343, 'crianca_bike', 'aula de spinning para crianca', 'seed'),
+    (1344, 'crianca_bike', 'meu filho pode fazer rgc bike', 'seed'),
+
+    -- crianca_danca (17)
+    (1345, 'crianca_danca', 'meu filho pode fazer fitdance', 'seed'),
+    (1346, 'crianca_danca', 'minha filha pode fazer fitdance', 'seed'),
+    (1347, 'crianca_danca', 'crianca pode fazer fitdance', 'seed'),
+    (1348, 'crianca_danca', 'criancas podem dancar fitdance', 'seed'),
+    (1349, 'crianca_danca', 'tem fitdance infantil', 'seed'),
+    (1350, 'crianca_danca', 'fitdance para criancas', 'seed'),
+    (1351, 'crianca_danca', 'fitdance kids', 'seed'),
+    (1352, 'crianca_danca', 'com quantos anos pode fazer fitdance', 'seed'),
+    (1353, 'crianca_danca', 'idade minima para fitdance', 'seed'),
+    (1354, 'crianca_danca', 'meu filho de 10 anos pode fazer fitdance', 'seed'),
+    (1355, 'crianca_danca', 'adolescente pode fazer fitdance', 'seed'),
+    (1356, 'crianca_danca', 'menor de idade pode fazer fitdance', 'seed'),
+    (1357, 'crianca_danca', 'quero colocar meu filho na aula de danca', 'seed'),
+    (1358, 'crianca_danca', 'a partir de que idade pode fazer danca', 'seed'),
+    (1359, 'crianca_danca', 'minha filha de 12 anos pode dancar danca', 'seed'),
+    (1360, 'crianca_danca', 'aula de danca para crianca', 'seed'),
+    (1361, 'crianca_danca', 'minha filha pode fazer fit dance', 'seed'),
+
+    -- crianca_yoga (16)
+    (1362, 'crianca_yoga', 'meu filho pode fazer yoga', 'seed'),
+    (1363, 'crianca_yoga', 'minha filha pode fazer yoga', 'seed'),
+    (1364, 'crianca_yoga', 'crianca pode fazer yoga', 'seed'),
+    (1365, 'crianca_yoga', 'criancas podem praticar yoga', 'seed'),
+    (1366, 'crianca_yoga', 'tem yoga infantil', 'seed'),
+    (1367, 'crianca_yoga', 'yoga para criancas', 'seed'),
+    (1368, 'crianca_yoga', 'yoga kids', 'seed'),
+    (1369, 'crianca_yoga', 'com quantos anos pode fazer yoga', 'seed'),
+    (1370, 'crianca_yoga', 'idade minima para yoga', 'seed'),
+    (1371, 'crianca_yoga', 'meu filho de 10 anos pode fazer yoga', 'seed'),
+    (1372, 'crianca_yoga', 'adolescente pode fazer yoga', 'seed'),
+    (1373, 'crianca_yoga', 'menor de idade pode fazer yoga', 'seed'),
+    (1374, 'crianca_yoga', 'quero colocar meu filho na aula de ioga', 'seed'),
+    (1375, 'crianca_yoga', 'a partir de que idade pode fazer ioga', 'seed'),
+    (1376, 'crianca_yoga', 'minha filha de 12 anos pode praticar ioga', 'seed'),
+    (1377, 'crianca_yoga', 'aula de ioga para crianca', 'seed'),
+
+    -- crianca_boxe: apelidos e menino/menina (3)
+    (1378, 'crianca_boxe', 'meu menino pode fazer boxe', 'seed'),
+    (1379, 'crianca_boxe', 'minha menina pode treinar boxe', 'seed'),
+    (1380, 'crianca_boxe', 'menino de 8 anos pode fazer boxe', 'seed'),
+
+    -- crianca_muay_thai: apelidos e menino/menina (3)
+    (1381, 'crianca_muay_thai', 'meu menino pode fazer muay thai', 'seed'),
+    (1382, 'crianca_muay_thai', 'minha menina pode treinar muay thai', 'seed'),
+    (1383, 'crianca_muay_thai', 'menino de 8 anos pode fazer muay thai', 'seed'),
+
+    -- crianca_lutas: apelidos e menino/menina (9)
+    (1384, 'crianca_lutas', 'meu filho pode fazer artes marciais', 'seed'),
+    (1385, 'crianca_lutas', 'meu filho de 10 anos pode fazer artes marciais', 'seed'),
+    (1386, 'crianca_lutas', 'crianca pode fazer artes marciais', 'seed'),
+    (1387, 'crianca_lutas', 'meu filho pode fazer lutas', 'seed'),
+    (1388, 'crianca_lutas', 'meu filho de 10 anos pode fazer lutas', 'seed'),
+    (1389, 'crianca_lutas', 'crianca pode fazer lutas', 'seed'),
+    (1390, 'crianca_lutas', 'meu menino pode fazer artes marciais', 'seed'),
+    (1391, 'crianca_lutas', 'minha menina pode lutar', 'seed'),
+    (1392, 'crianca_lutas', 'menino de 8 anos pode fazer artes marciais', 'seed'),
+
+    -- crianca_bike: apelidos e menino/menina (8)
+    (1393, 'crianca_bike', 'meu filho pode fazer spinning', 'seed'),
+    (1394, 'crianca_bike', 'meu filho de 10 anos pode fazer spinning', 'seed'),
+    (1395, 'crianca_bike', 'crianca pode fazer spinning', 'seed'),
+    (1396, 'crianca_bike', 'meu filho de 10 anos pode fazer rgc bike', 'seed'),
+    (1397, 'crianca_bike', 'crianca pode fazer rgc bike', 'seed'),
+    (1398, 'crianca_bike', 'meu menino pode fazer spinning', 'seed'),
+    (1399, 'crianca_bike', 'minha menina pode pedalar', 'seed'),
+    (1400, 'crianca_bike', 'menino de 8 anos pode fazer spinning', 'seed'),
+
+    -- crianca_danca: apelidos e menino/menina (6)
+    (1401, 'crianca_danca', 'meu filho pode fazer danca', 'seed'),
+    (1402, 'crianca_danca', 'meu filho de 10 anos pode fazer danca', 'seed'),
+    (1403, 'crianca_danca', 'crianca pode fazer danca', 'seed'),
+    (1404, 'crianca_danca', 'meu menino pode fazer danca', 'seed'),
+    (1405, 'crianca_danca', 'minha menina pode dancar na aula', 'seed'),
+    (1406, 'crianca_danca', 'menino de 8 anos pode fazer danca', 'seed'),
+
+    -- crianca_yoga: apelidos e menino/menina (6)
+    (1407, 'crianca_yoga', 'meu filho pode fazer ioga', 'seed'),
+    (1408, 'crianca_yoga', 'meu filho de 10 anos pode fazer ioga', 'seed'),
+    (1409, 'crianca_yoga', 'crianca pode fazer ioga', 'seed'),
+    (1410, 'crianca_yoga', 'meu menino pode fazer ioga', 'seed'),
+    (1411, 'crianca_yoga', 'minha menina pode praticar yoga', 'seed'),
+    (1412, 'crianca_yoga', 'menino de 8 anos pode fazer ioga', 'seed')
 ) AS v(ord, codigo, texto, origem)
 JOIN intents i ON i.codigo = v.codigo
 ORDER BY v.ord;
@@ -2817,14 +3007,12 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('Bom diaaa', 'saudacao', 'dificil'),
     ('Opa, boa noite', 'saudacao', 'variacao'),
     ('Tchau, até mais!', 'despedida', 'padrao'),
-    ('Até amanhã', 'despedida', 'padrao'),
     ('Falou, até a próxima', 'despedida', 'variacao'),
     ('Era só isso, tchau', 'despedida', 'variacao'),
     ('Muito obrigado pela ajuda!', 'agradecimento', 'padrao'),
     ('Valeu demais', 'agradecimento', 'variacao'),
     ('Obrigada, ajudou bastante', 'agradecimento', 'padrao'),
     ('Show, valeu!', 'agradecimento', 'variacao'),
-    ('Você é um robô?', 'sobre_bot', 'padrao'),
     ('Estou conversando com uma inteligência artificial?', 'sobre_bot', 'padrao'),
     ('Qual é o seu nome?', 'sobre_bot', 'padrao'),
     ('Isso aqui é resposta automática?', 'sobre_bot', 'variacao'),
@@ -2837,14 +3025,11 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('O vestiário masculino estava muito sujo hoje', 'reclamacao_sugestao', 'variacao'),
     ('Tenho uma sugestão para a academia', 'reclamacao_sugestao', 'padrao'),
     ('O ar-condicionado não está funcionando', 'reclamacao_sugestao', 'dificil'),
-    ('Qual o horário de funcionamento?', 'horario_funcionamento', 'padrao'),
     ('Que horas vocês abrem?', 'horario_funcionamento', 'padrao'),
-    ('Vocês abrem no domingo?', 'horario_funcionamento', 'padrao'),
     ('Até que horas posso treinar na sexta?', 'horario_funcionamento', 'variacao'),
     ('Funciona em feriado?', 'horario_funcionamento', 'padrao'),
     ('A academia está aberta agora?', 'horario_funcionamento', 'variacao'),
     ('Qual o orario de sabado', 'horario_funcionamento', 'dificil'),
-    ('Onde fica a academia?', 'endereco_localizacao', 'padrao'),
     ('Qual é o endereço de vocês?', 'endereco_localizacao', 'padrao'),
     ('Como faço para chegar aí?', 'endereco_localizacao', 'variacao'),
     ('Vocês ficam em qual bairro?', 'endereco_localizacao', 'padrao'),
@@ -2855,7 +3040,6 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('Me passa o número do zap', 'contato', 'variacao'),
     ('Qual o e-mail para contato?', 'contato', 'padrao'),
     ('Vocês tem Instagram?', 'contato', 'variacao'),
-    ('Tem estacionamento?', 'estacionamento', 'padrao'),
     ('Onde eu deixo o carro?', 'estacionamento', 'variacao'),
     ('O estacionamento é pago?', 'estacionamento', 'padrao'),
     ('Tem lugar para deixar a bike?', 'estacionamento', 'dificil'),
@@ -2863,8 +3047,6 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('Preciso levar cadeado para o armário?', 'estrutura', 'padrao'),
     ('A academia tem wi-fi?', 'estrutura', 'padrao'),
     ('Tem acesso para cadeirante?', 'estrutura', 'padrao'),
-    ('Os aparelhos são novos?', 'estrutura', 'variacao'),
-    ('Tem ar condicionado?', 'estrutura', 'dificil'),
     ('Como funciona a entrada na academia?', 'acesso_academia', 'padrao'),
     ('A catraca não liberou minha entrada', 'acesso_academia', 'padrao'),
     ('Minha digital não está passando', 'acesso_academia', 'variacao'),
@@ -2873,21 +3055,14 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('Meu filho tem 15 anos, ele pode malhar?', 'idade_minima', 'variacao'),
     ('Menor de idade precisa de autorização?', 'idade_minima', 'padrao'),
     ('Idoso pode fazer academia aí?', 'idade_minima', 'variacao'),
-    ('Quais são os planos?', 'planos_valores', 'padrao'),
     ('Quanto custa a mensalidade?', 'planos_valores', 'padrao'),
     ('Qual o valor do plano anual?', 'planos_valores', 'padrao'),
     ('Qual plano sai mais em conta?', 'planos_valores', 'variacao'),
     ('O plano mensal tem fidelidade?', 'planos_valores', 'variacao'),
-    ('Quanto fica o trimestral por mês?', 'planos_valores', 'padrao'),
     ('qnto custa', 'planos_valores', 'dificil'),
-    ('Como faço para me matricular?', 'matricula', 'padrao'),
     ('Quais documentos eu preciso levar?', 'matricula', 'padrao'),
-    ('Tem taxa de matrícula?', 'matricula', 'padrao'),
-    ('Precisa de atestado médico?', 'matricula', 'padrao'),
     ('Quero começar a treinar, o que faço?', 'matricula', 'variacao'),
     ('Dá pra fazer a matrícula pelo WhatsApp?', 'matricula', 'dificil'),
-    ('Quais as formas de pagamento?', 'formas_pagamento', 'padrao'),
-    ('Aceita Pix?', 'formas_pagamento', 'padrao'),
     ('Posso pagar no cartão de crédito?', 'formas_pagamento', 'padrao'),
     ('Dá pra parcelar o plano anual?', 'formas_pagamento', 'variacao'),
     ('Vocês aceitam boleto?', 'formas_pagamento', 'padrao'),
@@ -2896,7 +3071,6 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('Vocês aceitam Gympass?', 'descontos_promocoes', 'padrao'),
     ('Tem alguma promoção agora?', 'descontos_promocoes', 'padrao'),
     ('Tem plano para casal?', 'descontos_promocoes', 'variacao'),
-    ('Aceita TotalPass?', 'descontos_promocoes', 'padrao'),
     ('Quero trocar meu plano mensal pelo anual', 'troca_plano', 'padrao'),
     ('Como faço para renovar meu plano?', 'troca_plano', 'padrao'),
     ('Posso fazer upgrade do meu plano?', 'troca_plano', 'padrao'),
@@ -2906,17 +3080,14 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('Tem multa se eu atrasar?', 'pagamento_atrasado', 'variacao'),
     ('Esqueci de pagar esse mês', 'pagamento_atrasado', 'padrao'),
     ('Quero cancelar meu plano', 'cancelamento', 'padrao'),
-    ('Como faço o cancelamento?', 'cancelamento', 'padrao'),
     ('Tem multa para cancelar o anual?', 'cancelamento', 'variacao'),
     ('Não quero mais ser aluno', 'cancelamento', 'dificil'),
-    ('Quero sair da academia', 'cancelamento', 'padrao'),
     ('Quero trancar minha matrícula', 'trancamento', 'padrao'),
     ('Vou viajar por um mês, posso pausar o plano?', 'trancamento', 'variacao'),
     ('Dá pra congelar o plano?', 'trancamento', 'padrao'),
     ('Vou fazer uma cirurgia, como fica meu plano?', 'trancamento', 'dificil'),
     ('Quantos dias posso trancar?', 'trancamento', 'padrao'),
     ('Vocês têm personal trainer?', 'personal_trainer', 'padrao'),
-    ('Quanto custa o personal?', 'personal_trainer', 'padrao'),
     ('O personal está incluso na mensalidade?', 'personal_trainer', 'variacao'),
     ('Quero treino individual com um professor', 'personal_trainer', 'variacao'),
     ('Posso levar meu próprio personal?', 'personal_trainer', 'dificil'),
@@ -2924,24 +3095,16 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('A avaliação física é paga?', 'avaliacao_fisica', 'padrao'),
     ('Quero fazer bioimpedância', 'avaliacao_fisica', 'padrao'),
     ('Quando posso fazer reavaliação?', 'avaliacao_fisica', 'variacao'),
-    ('Tem aula experimental?', 'aula_experimental', 'padrao'),
     ('Posso fazer uma aula grátis antes?', 'aula_experimental', 'padrao'),
     ('Quanto custa a diária?', 'aula_experimental', 'padrao'),
     ('Quero conhecer a academia antes de fechar', 'aula_experimental', 'variacao'),
-    ('Quais modalidades vocês têm?', 'aulas_modalidades', 'padrao'),
-    ('Tem aula de yoga?', 'aulas_modalidades', 'padrao'),
     ('Vocês têm pilates?', 'aulas_modalidades', 'padrao'),
     ('Tem crossfit aí?', 'aulas_modalidades', 'variacao'),
     ('As aulas coletivas estão inclusas no plano?', 'aulas_modalidades', 'variacao'),
-    ('Tem natação?', 'aulas_modalidades', 'padrao'),
     ('Qual o horário das aulas?', 'horario_aulas', 'padrao'),
-    ('Que horas tem spinning?', 'horario_aulas', 'padrao'),
     ('Que dia tem aula de dança?', 'horario_aulas', 'padrao'),
     ('Tem aula de funcional à noite?', 'horario_aulas', 'dificil'),
     ('Qual a grade de aulas de sábado?', 'horario_aulas', 'variacao'),
-    ('Qual a capital da França?', NULL, 'fora_escopo'),
-    ('Quem ganhou o jogo ontem?', NULL, 'fora_escopo'),
-    ('Me conta uma piada', NULL, 'fora_escopo'),
     ('Qual a previsão do tempo amanhã?', NULL, 'fora_escopo'),
     ('Quanto está o dólar hoje?', NULL, 'fora_escopo'),
     ('Me indica um filme', NULL, 'fora_escopo'),
@@ -2951,8 +3114,21 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('asdfghjkl', NULL, 'fora_escopo'),
     ('Qual a raiz quadrada de 144?', NULL, 'fora_escopo'),
     ('Pode me ajudar com meu trabalho da faculdade?', NULL, 'fora_escopo'),
-    ('Quero pedir uma pizza', NULL, 'fora_escopo'),
     ('Como faço para trocar o pneu do carro?', NULL, 'fora_escopo'),
-    ('?', NULL, 'fora_escopo');
+    ('?', NULL, 'fora_escopo'),
+
+    -- crianças por modalidade
+    ('Meu garoto de 11 anos quer fazer boxe, pode?', 'crianca_boxe', 'variacao'),
+    ('Criança treina boxe aí?', 'crianca_boxe', 'dificil'),
+    ('Minha filha de 15 anos pode fazer muay thai?', 'crianca_muay_thai', 'variacao'),
+    ('Muay thai aceita adolescente?', 'crianca_muay_thai', 'variacao'),
+    ('Meu filho pode aprender luta na academia?', 'crianca_lutas', 'variacao'),
+    ('Tem arte marcial para crianças?', 'crianca_lutas', 'dificil'),
+    ('Criança pode pedalar na RGC Bike?', 'crianca_bike', 'variacao'),
+    ('Meu filho de 9 anos pode fazer spinning?', 'crianca_bike', 'variacao'),
+    ('Minha filha pode dançar no FitDance?', 'crianca_danca', 'variacao'),
+    ('FitDance é liberado para menores?', 'crianca_danca', 'dificil'),
+    ('Meu filho de 13 anos pode fazer yoga?', 'crianca_yoga', 'variacao'),
+    ('Yoga serve para crianças?', 'crianca_yoga', 'dificil');
 
 COMMIT;

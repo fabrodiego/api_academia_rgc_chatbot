@@ -143,6 +143,13 @@ Métricas devolvidas:
 | `matrizConfusao` | `esperada → obtida → quantidade` |
 | `erros` | Casos que erraram, com intenção esperada, obtida e score |
 
+**Separação entre treino e teste.** Nenhum caso de teste pode ser igual a uma
+frase de treino depois de normalizar (minúsculas, sem acento, sem pontuação,
+como o `Tokenizer`). Caso igual ao treino acerta por memória e infla a
+acurácia. O teste `SeparacaoTreinoTesteTest` lê o `sql/banco.sql` e falha se
+isso acontecer. Ao criar casos novos, escreva frases que não estão no treino,
+e não ajuste o treino para acertar um caso de teste específico.
+
 O usuário do banco precisa de permissão de `UPDATE` em `test_cases`.
 
 Testes automatizados do cálculo das métricas: `mvn test`.
