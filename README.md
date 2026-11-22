@@ -6,14 +6,17 @@ de intenção por **TF-IDF e similaridade de cosseno** implementados nativamente
 
 ## Arquitetura
 
+Arquitetura **híbrida**: a similaridade (TF-IDF + cosseno) mede *quão parecida* a mensagem é de cada intent;
+**regras explícitas** decidem se o bot responde, usa o contexto da sessão ou encaminha a um humano.
+
 ```
 Usuário → POST /api/chat
-   → Tokenizer            (normalização: minúsculas, remoção de acentos/pontuação)
-   → StopWordsFilter       (remoção de palavras sem valor discriminativo)
+   → Preprocessador        (Tokenizer: minúsculas, sem acento/pontuação; StopWordsFilter; negação "nao_quero")
    → TfIdfVectorizer       (vetorização no espaço do corpus de treino)
-   → CosineSimilarity      (comparação com as frases de treino)
-   → score >= limiar  → resposta da intenção correspondente
-   → score <  limiar  → fallback (encaminhamento a atendimento humano)
+   → ClassificadorTfIdf    (cosseno com todas as frases de treino → top-3 intents distintas,
+                            tokens e fração de tokens conhecidos)
+   → PoliticaDecisao       (regras: fração conhecida → limiar → margem → contexto)
+   → resposta da intent  |  fallback (encaminhamento a atendimento humano)
    → persistência em `conversations` (Postgres)
 ```
 
@@ -22,6 +25,25 @@ Usuário → POST /api/chat
 - **Fallback controlado**: limiar configurável via `chatbot.fallback-threshold`.
 - **Contexto de sessão (mínimo)**: o `ChatService` guarda em memória a última intent *respondida* de cada `sessionId` (`ContextoSessao`). Ela é usada **só para desempate**: quando a diferença de score entre a 1ª e a 2ª intent fica abaixo de `chatbot.margem-minima` e uma das duas é a última intent da sessão (ou da mesma família no mapa de `EquivalenciaIntents`, ex.: `plano_mensal` e `plano_anual`), o bot escolhe essa (motivo `contexto`). Fora desse caso o contexto não interfere: não há resolução de pronomes nem de perguntas de seguimento sem ambiguidade. Limites: a entrada expira após 30 min (`chatbot.contexto.ttl-minutos`) e o mapa guarda no máximo 10.000 sessões (`chatbot.contexto.max-sessoes`; descarta as expiradas e depois a menos usada). Sem `sessionId` a sessão é `anonimo`, compartilhada por todos, e por isso não usa contexto. Reiniciar a aplicação zera o contexto.
 - **Log de conversas**: toda interação é persistida, servindo de base para avaliação.
+
+## Regras de decisão: quem decide o quê
+
+| Quem | Decide |
+|---|---|
+| **Similaridade** (`ClassificadorTfIdf`) | Os scores de cada intent (melhor frase de treino de cada intent), o top-3, os tokens e a fração de tokens conhecidos. Não decide nada sozinha. |
+| **Regras** (`PoliticaDecisao`) | Responder ou encaminhar, nesta ordem (a primeira que falha define o `motivo`). |
+| **Contexto** (`ContextoSessao`) | Só desempata a regra 3, quando há uma intent anterior na sessão. |
+
+1. **Tokens conhecidos** (`chatbot.fracao-minima-conhecida`): fração dos tokens da mensagem que existem no vocabulário de treino. Abaixo do mínimo → fallback, motivo `tokens_desconhecidos` (inclui mensagem só com stopwords).
+2. **Limiar** (`chatbot.fallback-threshold`): score da 1ª intent abaixo do limiar → fallback, motivo `score_baixo`.
+3. **Margem** (`chatbot.margem-minima`): diferença entre o score da 1ª e da 2ª intent abaixo do mínimo → ambíguo. Se a 1ª ou a 2ª for a última intent da sessão (ou da mesma família em `EquivalenciaIntents`), usa essa, motivo `contexto`. Senão → fallback, motivo `margem_pequena`.
+4. Passou em tudo → responde com a 1ª intent, motivo `ok`.
+
+**Negação.** "não/nao" era stopword e sumia ("Não quero mais ser aluno" virava "quero aluno" e caía em matrícula). Agora ele funde com o próximo token que não é stopword (`nao_quero`), igual no treino e na mensagem. Se a mensagem tem uma fusão que nenhuma frase de treino contém (ex.: `nao_estacionamento`), volta ao token simples (`estacionamento`), para a negação não apagar uma palavra conhecida. Configurável em `chatbot.negacao` (`ignorar`, `manter`, `fundir`, `fundir_com_recuo`). Comparação por leave-one-out nas 1.412 frases de treino (1-NN, acertos estrito / com equivalência): `ignorar` 700 / 743, `manter` 699 / 742, `fundir` 699 / 742, `fundir_com_recuo` 700 / 743. O treino tem poucas frases com negação (11), então o leave-one-out praticamente empata; a escolha por `fundir_com_recuo` é o empate que mantém a negação distinguível sem perder o que já funcionava.
+
+**Calibração dos três valores.** Varredura de limiar (0 a 0,60), margem (0 a 0,15) e fração mínima (0 a 1) por **leave-one-out só nas frases de treino**: cada frase é classificada por um modelo montado com todas as outras (IDF incluído). As frases da intent `fora_escopo` funcionam como negativas (certo = fallback ou `fora_escopo`); as demais acertam por igualdade ou equivalência pai → filha. Os casos de teste não entram na calibração. A curva completa (1.736 combinações) está em `docs/resultados/calibracao.csv`, gerada por `GET /api/avaliacao/calibracao`, com a linha escolhida marcada (`escolhido=1`).
+
+Critério: utilidade = acertos − respostas erradas (encaminhar a um humano custa 0; responder errado custa 1). O máximo da utilidade (limiar 0, margem 0,08, fração 1,0) responde menos da metade das frases, então vale entre as combinações com pelo menos 99% da utilidade máxima, a que **mais acerta**. Escolhido: **limiar 0,46, margem 0,02, fração mínima 1,0**. No leave-one-out: 655 acertos, 236 respostas erradas, 521 encaminhadas, 90 de 96 frases de `fora_escopo` rejeitadas; a configuração anterior (0,18 / 0 / 0) tinha 748 acertos e 591 respostas erradas. Limites desta escolha: o leave-one-out é mais pessimista que o uso real (tira da base a paráfrase mais próxima de cada frase) e a ponderação 1:1 entre erro e acerto é uma decisão de projeto; o CSV permite escolher outro ponto, mas **a escolha deve continuar sendo feita no treino, nunca nos casos de teste**.
 
 ## Escopo
 
@@ -79,6 +101,8 @@ A aplicação lê a configuração via variáveis de ambiente:
 | `DB_PASSWORD` | —                          |
 | `ADMIN_KEY`   | — (sem ela, `feedback`, `recarregar-modelo` e `avaliacao` ficam bloqueados) |
 
+Parâmetros do bot em `application.yml` (`chatbot.*`): `fallback-threshold` (0,46), `margem-minima` (0,02), `fracao-minima-conhecida` (1,0), `negacao` (`fundir_com_recuo`), `contexto.ttl-minutos` (30) e `contexto.max-sessoes` (10000).
+
 Nenhuma credencial é versionada no repositório.
 
 ## Pré-requisitos
@@ -122,6 +146,39 @@ Resposta:
   "fallback": false
 }
 ```
+
+Os campos de `/api/chat` continuam os mesmos.
+
+### Endpoints novos
+
+**`POST /api/chat/explicar`** (público; **não grava** em `conversations` nem altera o contexto da sessão). Mostra como a mensagem seria decidida:
+
+```bash
+curl -X POST http://localhost:8080/api/chat/explicar \
+  -H "Content-Type: application/json" \
+  -d '{"sessionId":"teste1","mensagem":"Não quero mais ser aluno"}'
+```
+```json
+{
+  "tokens": ["nao_quero", "aluno"],
+  "fracaoConhecida": 1.0,
+  "top": [{"intent": "matricula", "score": 0.62}, {"intent": "cancelamento", "score": 0.58}, {"intent": "saudacao", "score": 0.0}],
+  "limiar": 0.46,
+  "margem": 0.043,
+  "margemMinima": 0.02,
+  "fracaoMinima": 1.0,
+  "decisao": "resposta",
+  "motivo": "ok",
+  "intent": "matricula",
+  "resposta": "...",
+  "latenciaMs": 3
+}
+```
+`decisao` = `resposta` ou `fallback`; `motivo` = `ok`, `score_baixo`, `margem_pequena`, `tokens_desconhecidos` ou `contexto`; `margem` é a diferença observada entre a 1ª e a 2ª intent (`limiar`, `margemMinima` e `fracaoMinima` são os valores configurados); `intent` é `null` no fallback.
+
+**`GET /api/avaliacao/comparacao`** (header `X-Admin-Key`; não grava em `test_cases`). Roda os casos de teste no TF-IDF (mesma decisão do chat, sem contexto) e num baseline Naive Bayes multinomial feito à mão (mesmo pré-processamento sem negação, sem limiar nem regras; só cai no fallback se nenhum token é conhecido). Devolve acurácia estrita e com equivalência de cada um, no geral e por tipo.
+
+**`GET /api/avaliacao/calibracao`** (header `X-Admin-Key`): refaz a varredura leave-one-out sobre o treino e devolve o CSV da curva (leva alguns segundos). Parâmetro opcional `negacao` para comparar os modos.
 
 Para recarregar o modelo após alterar `training_phrases` sem reiniciar a aplicação
 (endpoint restrito: exige o header `X-Admin-Key`):
@@ -199,6 +256,17 @@ Testes automatizados (cálculo das métricas, regra de equivalência e separaç�
 mvn test
 ```
 
+### Resultados nos 127 casos de teste
+
+| | Estrita | Com equivalência | padrao | variacao | dificil | fora_escopo |
+|---|---|---|---|---|---|---|
+| TF-IDF só com limiar 0,18 (antes das regras) | 103/127 (81,1%) | 111/127 (87,4%) | 52/55 | 43/46 | 4/15 | 4/11 |
+| (mesma configuração antiga com a negação fundida: idêntico) | 103/127 | 111/127 | 52/55 | 43/46 | 4/15 | 4/11 |
+| TF-IDF + regras calibradas no treino (atual) | 88/127 (69,3%) | 95/127 (74,8%) | 44/55 | 35/46 | 2/15 | 7/11 |
+| Baseline Naive Bayes | 67/127 (52,8%) | 80/127 (63,0%) | 28/55 | 29/46 | 6/15 | 4/11 |
+
+(colunas por tipo: acurácia estrita.) As regras novas **reduziram** a acurácia nos casos de teste: a calibração no treino (leave-one-out) escolheu um ponto conservador, e dos 32 erros restantes (com equivalência) 23 são casos que caíram no fallback, a maioria com score alto mas com uma palavra fora do vocabulário (fração mínima 1,0) ou score abaixo de 0,46. Em troca, o bot responde errado menos vezes (9 respostas erradas contra 16 antes, todas as 16 sem nenhum fallback) e encaminha mais ao humano. A calibração não foi refeita olhando esses casos: seria vazamento do teste para os parâmetros.
+
 ## Aprendizado por feedback confirmado
 
 O sistema **não** aprende automaticamente de toda conversa — isso reforçaria
@@ -217,3 +285,11 @@ curl -X POST http://localhost:8080/api/chat/feedback \
 
 Isso cria uma linha em `training_phrases` com `origem = 'aprendida'` (rastreável
 até a conversa de origem via `conversation_id`) e recarrega o modelo automaticamente.
+
+## Privacidade
+
+- A tabela `conversations` guarda o **texto livre** que o usuário digitou, junto com o `sessionId`, a intent detectada, o score e a resposta. Texto livre pode conter dado pessoal sem que ninguém peça.
+- Os dados do projeto (frases de treino, casos de teste, respostas) são **fictícios**. O bot **não pede** nome, CPF, telefone, e-mail ou qualquer dado pessoal, e a interface deve avisar o usuário para não digitá-los.
+- `POST /api/chat/explicar` não grava nada em `conversations`. O contexto de sessão fica só em memória (expira em 30 min e some ao reiniciar).
+- O feedback confirmado copia o texto de uma conversa para `training_phrases`. Antes de confirmar, o humano deve conferir que a frase não tem dado pessoal.
+- Retenção sugerida: manter `conversations` por até 90 dias para avaliação e apagar depois (por exemplo, `DELETE FROM conversations WHERE created_at < now() - interval '90 days'`, em rotina agendada). Frases que viraram treino (`origem = 'aprendida'`) mantêm só o texto, sem ligação com a sessão, depois que a conversa de origem for apagada (`conversation_id` vai para `NULL`).
