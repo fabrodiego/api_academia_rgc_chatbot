@@ -30,13 +30,16 @@ public class ChatService {
     // contexto mínimo: última intenção detectada por sessão (em memória)
     private final Map<String, String> ultimaIntentPorSessao = new ConcurrentHashMap<>();
 
-    @Value("${chatbot.fallback-threshold:0.18}")
-    private double limiarFallback;
+    private final PoliticaDecisao politica;
 
     public ChatService(IntentClassifierService classifierService,
                         BotResponseRepository botResponseRepository,
                         IntentRepository intentRepository,
-                        ConversationRepository conversationRepository) {
+                        ConversationRepository conversationRepository,
+                        @Value("${chatbot.fallback-threshold:0.18}") double limiar,
+                        @Value("${chatbot.margem-minima:0.0}") double margemMinima,
+                        @Value("${chatbot.fracao-minima-conhecida:0.0}") double fracaoMinima) {
+        this.politica = new PoliticaDecisao(limiar, margemMinima, fracaoMinima);
         this.classifierService = classifierService;
         this.botResponseRepository = botResponseRepository;
         this.intentRepository = intentRepository;
@@ -61,16 +64,16 @@ public class ChatService {
     public RespostaChat gerarResposta(String mensagem) {
         ClassificadorTfIdf.Classificacao classificacao = classifierService.classificar(mensagem);
 
-        boolean fallback = classificacao.intentCodigo() == null || classificacao.score() < limiarFallback;
-        if (fallback) {
+        PoliticaDecisao.Decisao decisao = politica.decidir(classificacao);
+        if (decisao.fallback()) {
             return new RespostaChat(RESPOSTA_FALLBACK, null, classificacao.score(), true);
         }
-        String intent = classificacao.intentCodigo();
+        String intent = decisao.intent();
         return new RespostaChat(buscarRespostaAleatoria(intent), intent, classificacao.score(), false);
     }
 
     public double getLimiarFallback() {
-        return limiarFallback;
+        return politica.getLimiar();
     }
 
     private String buscarRespostaAleatoria(String intentCodigo) {

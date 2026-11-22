@@ -16,7 +16,11 @@ spring:
         default_schema: chatbot
 
 chatbot:
-  fallback-threshold: 0.18   # abaixo disso, encaminha para atendimento humano
+  # Regras de decisão. Valores escolhidos por varredura leave-one-out no TREINO
+  # (docs/resultados/calibracao.csv, linha com escolhido=1); critério no README.
+  fallback-threshold: 0.46        # score da 1ª intent abaixo disso -> atendimento humano
+  margem-minima: 0.02             # 1ª - 2ª intent abaixo disso -> ambíguo (contexto ou humano)
+  fracao-minima-conhecida: 1.0    # fração mínima de tokens no vocabulário de treino
   # tratamento de "não": ignorar | manter | fundir | fundir_com_recuo (ver README e docs/resultados/calibracao.csv)
   negacao: fundir_com_recuo
   admin-key: ${ADMIN_KEY:}   # chave dos endpoints de dev (vazia = bloqueado)

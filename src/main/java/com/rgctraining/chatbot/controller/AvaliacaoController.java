@@ -1,6 +1,7 @@
 package com.rgctraining.chatbot.controller;
 
 import com.rgctraining.chatbot.avaliacao.AvaliacaoService;
+import com.rgctraining.chatbot.avaliacao.CalibracaoService;
 import com.rgctraining.chatbot.security.AdminKeyGuard;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,10 +19,13 @@ import java.nio.charset.StandardCharsets;
 public class AvaliacaoController {
 
     private final AvaliacaoService avaliacaoService;
+    private final CalibracaoService calibracaoService;
     private final AdminKeyGuard adminKeyGuard;
 
-    public AvaliacaoController(AvaliacaoService avaliacaoService, AdminKeyGuard adminKeyGuard) {
+    public AvaliacaoController(AvaliacaoService avaliacaoService, CalibracaoService calibracaoService,
+                               AdminKeyGuard adminKeyGuard) {
         this.avaliacaoService = avaliacaoService;
+        this.calibracaoService = calibracaoService;
         this.adminKeyGuard = adminKeyGuard;
     }
 
@@ -47,5 +51,18 @@ public class AvaliacaoController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"casos-de-teste.csv\"")
                 .contentType(new MediaType("text", "csv", StandardCharsets.UTF_8))
                 .body(avaliacaoService.exportarCsv().getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Varredura leave-one-out (limiar x margem x fração) só sobre as frases de treino,
+     * em CSV. Demora alguns segundos. Parâmetro opcional "negacao" para comparar os modos.
+     */
+    @GetMapping("/calibracao")
+    public ResponseEntity<byte[]> calibracao(@RequestHeader(value = "X-Admin-Key", required = false) String chave,
+                                             @RequestParam(value = "negacao", required = false) String negacao) {
+        adminKeyGuard.exigir(chave);
+        return ResponseEntity.ok()
+                .contentType(new MediaType("text", "csv", StandardCharsets.UTF_8))
+                .body(calibracaoService.varreduraCsv(negacao).getBytes(StandardCharsets.UTF_8));
     }
 }
