@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * Executor dos casos de teste (tabela test_cases).
@@ -43,7 +42,8 @@ public class AvaliacaoService {
             caso.setIntentObtida(r.intentDetectado());
             caso.setScore(r.score());
             caso.setRespostaObtida(r.resposta());
-            caso.setResultado(Objects.equals(caso.getIntentEsperada(), r.intentDetectado()) ? "ACERTO" : "ERRO");
+            // resultado gravado = regra COM equivalência (a estrita sai nas métricas)
+            caso.setResultado(EquivalenciaIntents.acertoComEquivalencia(caso.getIntentEsperada(), r.intentDetectado()) ? "ACERTO" : "ERRO");
             caso.setExecutadoEm(agora);
         }
         testCaseRepository.saveAll(casos);
