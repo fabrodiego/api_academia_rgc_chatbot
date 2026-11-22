@@ -4,7 +4,7 @@
 -- as permissões continuam). Roda em uma transação: se der erro, nada é gravado.
 -- ATENÇÃO: o TRUNCATE abaixo também apaga as conversas. Em produção, prefira
 -- scripts incrementais (só INSERT/UPDATE).
--- Base: 49 intents, 97 respostas, 1412 frases de treino, 127 casos de teste.
+-- Base: 49 intents, 97 respostas, 1412 frases de treino, 188 casos de teste.
 
 BEGIN;
 
@@ -3178,6 +3178,14 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('Preciso levar algum papel?', 'matricula', 'ambigua'),
     ('Como funciona o plano?', 'planos_valores', 'ambigua'),
     ('Quais os aparelhos?', 'estrutura', 'ambigua'),
+
+    -- fora do escopo, mas com palavras do negócio
+    ('Quantas calorias tem um prato de arroz com feijão?', NULL, 'fora_escopo'),
+    ('Meu carro precisa trocar o óleo, vocês indicam mecânico?', NULL, 'fora_escopo'),
+    ('Em quem você vai votar para presidente?', NULL, 'fora_escopo'),
+    ('Como funciona o plano de saúde do SUS?', NULL, 'fora_escopo'),
+    ('Qual o horário do jogo do Brasil?', NULL, 'fora_escopo'),
+    ('Qual o melhor suplemento de creatina para comprar?', NULL, 'fora_escopo'),
 
     -- crianças por modalidade
     ('Meu garoto de 11 anos quer fazer boxe, pode?', 'crianca_boxe', 'variacao'),
