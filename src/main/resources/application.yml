@@ -16,7 +16,7 @@ spring:
         default_schema: chatbot
 
 chatbot:
-  # Regras de decisão. Valores calibrados no treino (0.46/0.02/1.0) estão em
+  # Regras de decisão. Valores calibrados no treino (0.46/0.05/1.0) estão em
   # docs/resultados/calibracao.csv; desligados por decisão de produto - ver docs/adr/0002.
   fallback-threshold: 0.18        # score da 1ª intent abaixo disso -> atendimento humano
   margem-minima: 0.0              # 1ª - 2ª intent abaixo disso -> fallback (0 = desligada)

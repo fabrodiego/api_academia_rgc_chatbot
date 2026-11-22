@@ -49,4 +49,29 @@ class PreprocessadorTest {
         assertEquals(esperado, new Preprocessador(ModoNegacao.FUNDIR).processar(f));
         assertEquals(esperado, new Preprocessador(ModoNegacao.MANTER).processar(f));
     }
+
+    @Test
+    void aiDepoisDeCumprimentoViraTokenDeSaudacao() {
+        var p = new Preprocessador();
+        assertEquals(List.of("e_ai"), p.processar("E aí"));
+        assertEquals(List.of("e_ai", "tudo", "bem"), p.processar("e ai, tudo bem?"));
+        assertEquals(List.of("fala", "e_ai"), p.processar("Fala aí"));
+    }
+
+    @Test
+    void aiComoAdverbioDeLugarSai() {
+        var p = new Preprocessador();
+        assertEquals(p.processar("Tem crossfit?"), p.processar("Tem crossfit aí?"));
+        assertEquals(p.processar("como chego"), p.processar("como chego ai"));
+        assertEquals(List.of(), p.processar("aí"));
+    }
+
+    @Test
+    void aiTemOMesmoTratamentoEmTodosOsModosDeNegacao() {
+        for (ModoNegacao modo : ModoNegacao.values()) {
+            var p = new Preprocessador(modo);
+            assertEquals(List.of("crossfit"), p.processar("tem crossfit aí?"), modo.name());
+            assertEquals(List.of("e_ai"), p.processar("e aí"), modo.name());
+        }
+    }
 }

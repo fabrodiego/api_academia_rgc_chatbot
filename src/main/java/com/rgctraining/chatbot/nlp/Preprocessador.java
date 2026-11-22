@@ -2,11 +2,17 @@ package com.rgctraining.chatbot.nlp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Pré-processamento único, usado igualmente no treino e na mensagem:
  * tokeniza (minúsculas, sem acento, sem pontuação), remove stopwords e trata
  * a negação conforme o {@link ModoNegacao}.
+ *
+ * <p>"aí" é tratado pelo contexto (ADR 0003): logo depois de um cumprimento
+ * ("e aí", "fala aí", "oi aí") vira o token {@value #SAUDACAO_AI}; em qualquer
+ * outra posição é advérbio de lugar ("tem crossfit aí?") e sai, como uma
+ * stopword. A lista de stopwords não muda.
  */
 public class Preprocessador {
 
@@ -34,6 +40,11 @@ public class Preprocessador {
     public static final String NEGACAO = "nao";
     public static final String PREFIXO_NEGACAO = NEGACAO + "_";
 
+    public static final String AI = "ai";
+    public static final String SAUDACAO_AI = "e_ai";
+    /** Palavras que, logo antes de "aí", fazem dele parte de um cumprimento. */
+    private static final Set<String> CUMPRIMENTOS_ANTES_DE_AI = Set.of("e", "fala", "oi", "ola", "opa", "salve");
+
     private final Tokenizer tokenizer = new Tokenizer();
     private final StopWordsFilter stopWordsFilter = new StopWordsFilter();
     private final ModoNegacao modoNegacao;
@@ -51,7 +62,7 @@ public class Preprocessador {
     }
 
     public List<String> processar(String texto) {
-        List<String> tokens = tokenizer.tokenize(texto);
+        List<String> tokens = tratarAi(tokenizer.tokenize(texto));
         if (modoNegacao == ModoNegacao.IGNORAR) {
             return stopWordsFilter.filtrar(tokens);
         }
@@ -67,6 +78,20 @@ public class Preprocessador {
             } else if (!stopWordsFilter.ehStopword(t)) {
                 saida.add(negando ? PREFIXO_NEGACAO + t : t);
                 negando = false;
+            }
+        }
+        return saida;
+    }
+
+    /** "aí" depois de cumprimento vira {@value #SAUDACAO_AI}; nas outras posições é descartado. */
+    private static List<String> tratarAi(List<String> tokens) {
+        List<String> saida = new ArrayList<>(tokens.size());
+        for (int i = 0; i < tokens.size(); i++) {
+            String t = tokens.get(i);
+            if (!AI.equals(t)) {
+                saida.add(t);
+            } else if (i > 0 && CUMPRIMENTOS_ANTES_DE_AI.contains(tokens.get(i - 1))) {
+                saida.add(SAUDACAO_AI);
             }
         }
         return saida;
