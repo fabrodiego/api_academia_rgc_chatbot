@@ -20,7 +20,7 @@ Mostrar no painel, nesta ordem (conferido em 2026-11-22 com a configuração de 
 Frase-chave: "O TF-IDF mede o quanto a pergunta se parece com cada frase de treino; as regras decidem se respondemos ou encaminhamos."
 
 ## 3. Resultados (1 min 30 s) — `/avaliacao.html`
-- 188 casos: estrita 76,6 %, com equivalência 82,4 %; baseline Naive Bayes 58,0 % / 69,1 %. Explicar por que existem as duas métricas (regra definida antes de olhar os erros).
+- 188 casos: estrita 77,1 %, com equivalência 83,0 %; baseline Naive Bayes 59,0 % / 70,2 %. Explicar por que existem as duas métricas (regra definida antes de olhar os erros).
 - A acurácia caiu de 81 % (127 casos) para 77 % (188) porque os 61 casos novos foram escritos sem olhar o modelo e cobrem intents antes sem teste. É o número mais honesto.
 - Matriz de confusão: apontar as intents vizinhas que se confundem.
 - Comparação com o baseline Naive Bayes.
@@ -29,8 +29,8 @@ Frase-chave: "O TF-IDF mede o quanto a pergunta se parece com cada frase de trei
 ## 4. Limitações e próximos passos (1 min)
 - Separação treino/teste garantida por teste automatizado.
 - Falta um conjunto de validação separado para calibrar as regras.
-- "Tem crossfit aí?" ia para saudação: o "aí" de lugar era lido como o "e aí" do cumprimento. Corrigido pelo contexto da palavra (ADR 0003): +2 casos, nenhum piorou. Transparência: o erro foi achado no ensaio e também aparece no teste, então esse ganho foi medido depois de olhar o teste.
-- Principais causas de erro (33 casos; contagem por causa feita antes do ADR 0003, com 35): intent genérica × específica quase empatadas (12), palavra que puxa a intent errada (11), fora do escopo com vocabulário da academia (6), negação (3).
+- "Tem crossfit aí?" ia para saudação: o "aí" de lugar era lido como o "e aí" do cumprimento. Corrigido pelo contexto da palavra (ADR 0003): +2 casos, nenhum piorou. No mesmo ADR, pilates/natação/crossfit/piscina saíram de `aulas_modalidades` (estavam nas duas intents) e 2 rótulos de teste foram corrigidos: 145/156. Transparência: o erro foi achado no ensaio e aparece no teste, então o ganho foi medido depois de olhar o teste; sem corrigir os rótulos seria 143.
+- Principais causas de erro (32 casos; contagem por causa feita antes do ADR 0003, com 35): intent genérica × específica quase empatadas (12), palavra que puxa a intent errada (11), fora do escopo com vocabulário da academia (6), negação (3).
 - O baseline ganha no tipo difícil (17 × 15): o TF-IDF 1-NN depende da frase de treino mais parecida.
 
 ## Perguntas prováveis (ensaiar)

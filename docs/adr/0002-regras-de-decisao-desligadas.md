@@ -48,4 +48,4 @@ Transparência: esta escolha foi feita **depois** de ver o resultado no teste. P
 
 ## Atualização (2026-11-22, ADR 0003)
 
-Com o tratamento do "aí", a calibração no treino passou a escolher margem 0,05 (limiar 0,46 e fração 1,0 iguais). Nos 188 casos: regras 116 (61,7 %) / 124 (66,0 %) contra 144 (76,6 %) / 155 (82,4 %) do padrão. A decisão de deixar as regras desligadas continua.
+Com o tratamento do "aí" e a correção das modalidades não oferecidas, a calibração no treino passou a escolher margem 0,03 (limiar 0,46 e fração 1,0 iguais). Nos 188 casos: regras 119 (63,3 %) / 127 (67,6 %) contra 145 (77,1 %) / 156 (83,0 %) do padrão. A decisão de deixar as regras desligadas continua.
