@@ -191,7 +191,9 @@ curl -X POST http://localhost:8080/api/chat/recarregar-modelo \
 
 A tabela `test_cases` guarda as perguntas de teste com a intenção esperada
 (`NULL` = o certo é cair no fallback) e o tipo (`padrao`, `variacao`,
-`dificil`, `fora_escopo`). O executor roda cada pergunta pela mesma decisão do
+`dificil`, `fora_escopo`, `ambigua`). Os casos `ambigua` são perguntas curtas
+e vagas ("Quanto custa?"); a intent esperada é a genérica mais provável, e a
+regra de equivalência aceita as filhas dela. O executor roda cada pergunta pela mesma decisão do
 `/api/chat` (sem gravar em `conversations`) e salva o resultado na própria
 tabela (`intent_obtida`, `score`, `resposta_obtida`, `resultado`, `executado_em`).
 

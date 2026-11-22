@@ -70,7 +70,10 @@ TRUNCATE test_cases, training_phrases, bot_responses, conversations, intents RES
 -- intent_obtida, score, resposta_obtida, resultado e executado_em são preenchidos ao rodar os testes.
 ALTER TABLE test_cases DROP COLUMN IF EXISTS resposta_esperada;
 ALTER TABLE test_cases ADD COLUMN IF NOT EXISTS intent_esperada VARCHAR(80) REFERENCES intents(codigo) ON UPDATE CASCADE;
-ALTER TABLE test_cases ADD COLUMN IF NOT EXISTS tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('padrao', 'variacao', 'dificil', 'fora_escopo'));
+ALTER TABLE test_cases ADD COLUMN IF NOT EXISTS tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('padrao', 'variacao', 'dificil', 'fora_escopo', 'ambigua'));
+-- bancos já existentes: troca a regra antiga do tipo pela nova (com 'ambigua')
+ALTER TABLE test_cases DROP CONSTRAINT IF EXISTS test_cases_tipo_check;
+ALTER TABLE test_cases ADD CONSTRAINT test_cases_tipo_check CHECK (tipo IN ('padrao', 'variacao', 'dificil', 'fora_escopo', 'ambigua'));
 ALTER TABLE test_cases ADD COLUMN IF NOT EXISTS intent_obtida VARCHAR(80);
 ALTER TABLE test_cases ADD COLUMN IF NOT EXISTS score NUMERIC(5,4);
 ALTER TABLE test_cases ADD COLUMN IF NOT EXISTS executado_em TIMESTAMP;
@@ -3116,7 +3119,6 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('Pode me ajudar com meu trabalho da faculdade?', NULL, 'fora_escopo'),
     ('Como faço para trocar o pneu do carro?', NULL, 'fora_escopo'),
     ('?', NULL, 'fora_escopo'),
-
     -- crianças por modalidade
     ('Meu garoto de 11 anos quer fazer boxe, pode?', 'crianca_boxe', 'variacao'),
     ('Criança treina boxe aí?', 'crianca_boxe', 'dificil'),
