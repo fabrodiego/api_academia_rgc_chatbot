@@ -2,6 +2,7 @@ package com.rgctraining.chatbot.controller;
 
 import com.rgctraining.chatbot.dto.ChatRequest;
 import com.rgctraining.chatbot.dto.ChatResponse;
+import com.rgctraining.chatbot.dto.ExplicarResponse;
 import com.rgctraining.chatbot.dto.FeedbackRequest;
 import com.rgctraining.chatbot.service.ChatService;
 import com.rgctraining.chatbot.service.FeedbackService;
@@ -38,6 +39,18 @@ public class ChatController {
         return new ChatResponse(r.resposta(), r.intentDetectado(), r.score(), r.fallback());
     }
 
+
+    /**
+     * Público e sem efeito colateral: mostra tokens, top-3, limiar/margem e o motivo da decisão.
+     * Não grava em conversations nem altera o contexto da sessão.
+     */
+    @PostMapping("/explicar")
+    public ExplicarResponse explicar(@RequestBody ChatRequest request) {
+        String sessionId = (request.getSessionId() == null || request.getSessionId().isBlank())
+                ? ChatService.SESSAO_ANONIMA
+                : request.getSessionId();
+        return chatService.explicar(sessionId, request.getMensagem());
+    }
 
     /** Use depois de alterar frases de treino no banco, para recarregar o modelo sem reiniciar o app. */
     @PostMapping("/recarregar-modelo")

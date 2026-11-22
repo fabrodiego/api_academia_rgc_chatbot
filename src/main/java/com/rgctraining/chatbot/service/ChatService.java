@@ -1,5 +1,6 @@
 package com.rgctraining.chatbot.service;
 
+import com.rgctraining.chatbot.dto.ExplicarResponse;
 import com.rgctraining.chatbot.model.BotResponse;
 import com.rgctraining.chatbot.model.Conversation;
 import com.rgctraining.chatbot.model.Intent;
@@ -85,6 +86,26 @@ public class ChatService {
     public Analise analisar(String mensagem, String ultimaIntent) {
         ClassificadorTfIdf.Classificacao classificacao = classifierService.classificar(mensagem);
         return new Analise(classificacao, politica.decidir(classificacao, ultimaIntent));
+    }
+
+    /**
+     * Mostra como a mensagem seria decidida (tokens, top-3, regras e motivo). Não grava em
+     * conversations e não altera o contexto da sessão; só lê a última intent para refletir o desempate.
+     */
+    public ExplicarResponse explicar(String sessionId, String mensagem) {
+        long inicio = System.nanoTime();
+        Analise a = analisar(mensagem, ultimaIntentDa(sessionId));
+        ClassificadorTfIdf.Classificacao c = a.classificacao();
+        PoliticaDecisao.Decisao d = a.decisao();
+        String resposta = d.fallback() ? RESPOSTA_FALLBACK : buscarRespostaAleatoria(d.intent());
+        List<ExplicarResponse.Candidato> top = c.top().stream()
+                .limit(IntentClassifierService.TOP_K)
+                .map(x -> new ExplicarResponse.Candidato(x.intent(), x.score()))
+                .toList();
+        long latenciaMs = (System.nanoTime() - inicio) / 1_000_000;
+        return new ExplicarResponse(c.tokens(), c.fracaoConhecida(), top,
+                politica.getLimiar(), c.margem(), politica.getMargemMinima(), politica.getFracaoMinima(),
+                d.fallback() ? "fallback" : "resposta", d.motivo().codigo(), d.intent(), resposta, latenciaMs);
     }
 
     /** Última intent da sessão (só leitura); null se não há, expirou ou a sessão é anônima. */
