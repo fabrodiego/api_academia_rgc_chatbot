@@ -66,4 +66,15 @@ class EquivalenciaIntentsTest {
     void mapaSoTemFilhasQueNaoSaoOProprioPai() {
         EquivalenciaIntents.FILHAS_POR_PAI.forEach((pai, filhas) -> assertFalse(filhas.contains(pai)));
     }
+
+    @Test
+    void mesmaFamiliaCobrePaiFilhaEIrmas() {
+        assertTrue(EquivalenciaIntents.mesmaFamilia("plano_mensal", "plano_mensal"));
+        assertTrue(EquivalenciaIntents.mesmaFamilia("planos_valores", "plano_anual"));
+        assertTrue(EquivalenciaIntents.mesmaFamilia("plano_anual", "planos_valores"));
+        assertTrue(EquivalenciaIntents.mesmaFamilia("plano_mensal", "plano_anual"));
+        assertFalse(EquivalenciaIntents.mesmaFamilia("plano_mensal", "aula_boxe"));
+        assertFalse(EquivalenciaIntents.mesmaFamilia("horario_funcionamento", "horario_fim_semana_feriado"));
+        assertFalse(EquivalenciaIntents.mesmaFamilia(null, "plano_anual"));
+    }
 }
