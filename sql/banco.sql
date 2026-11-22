@@ -4,7 +4,7 @@
 -- as permissões continuam). Roda em uma transação: se der erro, nada é gravado.
 -- ATENÇÃO: o TRUNCATE abaixo também apaga as conversas. Em produção, prefira
 -- scripts incrementais (só INSERT/UPDATE).
--- Base: 49 intents, 97 respostas, 1412 frases de treino, 188 casos de teste.
+-- Base: 49 intents, 97 respostas, 1410 frases de treino, 188 casos de teste.
 
 BEGIN;
 
@@ -978,12 +978,10 @@ FROM (VALUES
     (481, 'aulas_modalidades', 'tem funcional', 'seed'),
     (482, 'aulas_modalidades', 'tem aula de danca', 'seed'),
     (483, 'aulas_modalidades', 'tem zumba', 'seed'),
-    (484, 'aulas_modalidades', 'tem pilates', 'seed'),
-    (485, 'aulas_modalidades', 'tem crossfit', 'seed'),
+    (485, 'modalidades_nao_oferecidas', 'tem crossfit', 'seed'),
     (486, 'aulas_modalidades', 'tem luta', 'seed'),
     (487, 'aulas_modalidades', 'tem muay thai', 'seed'),
-    (488, 'aulas_modalidades', 'tem natacao', 'seed'),
-    (489, 'aulas_modalidades', 'tem piscina', 'seed'),
+    (489, 'modalidades_nao_oferecidas', 'tem piscina', 'seed'),
     (490, 'aulas_modalidades', 'tem musculacao', 'seed'),
     (491, 'aulas_modalidades', 'aula para iniciante', 'seed'),
     (492, 'aulas_modalidades', 'aulas estao inclusas no plano', 'seed'),
@@ -3101,8 +3099,8 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('Posso fazer uma aula grátis antes?', 'aula_experimental', 'padrao'),
     ('Quanto custa a diária?', 'aula_experimental', 'padrao'),
     ('Quero conhecer a academia antes de fechar', 'aula_experimental', 'variacao'),
-    ('Vocês têm pilates?', 'aulas_modalidades', 'padrao'),
-    ('Tem crossfit aí?', 'aulas_modalidades', 'variacao'),
+    ('Vocês têm pilates?', 'modalidades_nao_oferecidas', 'padrao'),
+    ('Tem crossfit aí?', 'modalidades_nao_oferecidas', 'variacao'),
     ('As aulas coletivas estão inclusas no plano?', 'aulas_modalidades', 'variacao'),
     ('Qual o horário das aulas?', 'horario_aulas', 'padrao'),
     ('Que dia tem aula de dança?', 'horario_aulas', 'padrao'),
