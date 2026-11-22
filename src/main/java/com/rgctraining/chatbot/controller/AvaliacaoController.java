@@ -2,6 +2,7 @@ package com.rgctraining.chatbot.controller;
 
 import com.rgctraining.chatbot.avaliacao.AvaliacaoService;
 import com.rgctraining.chatbot.avaliacao.CalibracaoService;
+import com.rgctraining.chatbot.avaliacao.ComparacaoService;
 import com.rgctraining.chatbot.security.AdminKeyGuard;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,12 +21,15 @@ public class AvaliacaoController {
 
     private final AvaliacaoService avaliacaoService;
     private final CalibracaoService calibracaoService;
+    private final ComparacaoService comparacaoService;
     private final AdminKeyGuard adminKeyGuard;
 
     public AvaliacaoController(AvaliacaoService avaliacaoService, CalibracaoService calibracaoService,
+                               ComparacaoService comparacaoService,
                                AdminKeyGuard adminKeyGuard) {
         this.avaliacaoService = avaliacaoService;
         this.calibracaoService = calibracaoService;
+        this.comparacaoService = comparacaoService;
         this.adminKeyGuard = adminKeyGuard;
     }
 
@@ -34,6 +38,16 @@ public class AvaliacaoController {
     public AvaliacaoService.Avaliacao executar(@RequestHeader(value = "X-Admin-Key", required = false) String chave) {
         adminKeyGuard.exigir(chave);
         return avaliacaoService.executar();
+    }
+
+    /**
+     * Roda os casos de teste no TF-IDF (com as regras do chat) e no baseline Naive Bayes e
+     * devolve acurácia estrita e com equivalência de cada um, geral e por tipo. Não grava nada.
+     */
+    @GetMapping("/comparacao")
+    public ComparacaoService.Comparacao comparacao(@RequestHeader(value = "X-Admin-Key", required = false) String chave) {
+        adminKeyGuard.exigir(chave);
+        return comparacaoService.comparar();
     }
 
     /** Métricas da última execução, sem rodar de novo. */
