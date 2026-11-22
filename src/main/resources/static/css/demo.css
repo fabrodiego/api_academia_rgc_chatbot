@@ -63,7 +63,6 @@ h1.t{font:800 22px var(--head);margin:0}
 .keybox .grow{flex:1 1 220px}
 .keybox .grow input{width:100%}
 .actions{display:flex;flex-wrap:wrap;gap:8px}
-.status{display:block;font:500 15px var(--body);margin:0}
 #status{margin-top:12px;padding:10px 14px;border-radius:8px;background:var(--card);border:1px solid var(--line);font-size:15px}
 #status.err{border-color:var(--bad);color:#9B2C2C;background:#FDECEC}
 #status.ok{border-color:var(--ok)}
