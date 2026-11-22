@@ -70,7 +70,10 @@
     s2.appendChild(bars);
     const lg = el('p', 'thr-legend');
     const b = el('b', null, 'Linha tracejada'); lg.appendChild(b);
-    lg.appendChild(document.createTextNode(' = limiar mínimo (' + num(r.limiar) + '). Margem mínima exigida entre 1ª e 2ª: ' + num(r.margem) + '.'));
+    lg.appendChild(document.createTextNode(' = limiar mínimo (' + num(r.limiar) + ').'
+      + (r.margemMinima > 0
+        ? ' Margem mínima exigida entre 1ª e 2ª: ' + num(r.margemMinima) + ' (observada: ' + num(r.margem) + ').'
+        : ' Regra de margem desligada (margem observada entre 1ª e 2ª: ' + num(r.margem) + ').')));
     s2.appendChild(lg);
     out.appendChild(s2);
 
