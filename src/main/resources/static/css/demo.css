@@ -80,4 +80,4 @@ table.cm td,table.cm th{text-align:center;padding:6px 8px;min-width:44px}
 table.cm th.rl{text-align:left}
 table.cm td.diag{outline:2px solid var(--ink);outline-offset:-2px}
 .win{font-weight:800}
-@media (max-width:800px){.tbar nav{display:none}}
+@media (max-width:800px){.tbar nav{display:none}h1.t{font-size:16px;text-align:right}}

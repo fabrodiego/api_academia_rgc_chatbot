@@ -295,3 +295,8 @@ até a conversa de origem via `conversation_id`) e recarrega o modelo automatica
 - `POST /api/chat/explicar` não grava nada em `conversations`. O contexto de sessão fica só em memória (expira em 30 min e some ao reiniciar).
 - O feedback confirmado copia o texto de uma conversa para `training_phrases`. Antes de confirmar, o humano deve conferir que a frase não tem dado pessoal.
 - Retenção sugerida: manter `conversations` por até 90 dias para avaliação e apagar depois (por exemplo, `DELETE FROM conversations WHERE created_at < now() - interval '90 days'`, em rotina agendada). Frases que viraram treino (`origem = 'aprendida'`) mantêm só o texto, sem ligação com a sessão, depois que a conversa de origem for apagada (`conversation_id` vai para `NULL`).
+
+## Páginas de demonstração
+
+- `/demo.html`: chat com o painel "Como o bot decidiu" (tokens, top-3 de intenções, limiar e motivo da decisão), via `POST /api/chat/explicar`.
+- `/avaliacao.html`: executa e consulta a avaliação do classificador (acurácia, matriz de confusão, erros, comparação com baseline). Exige a chave de administrador, informada na página e mantida só em memória.
