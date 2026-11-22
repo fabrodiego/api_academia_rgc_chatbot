@@ -42,10 +42,11 @@ public class ChatService {
                         @Value("${chatbot.fallback-threshold:0.18}") double limiar,
                         @Value("${chatbot.margem-minima:0.0}") double margemMinima,
                         @Value("${chatbot.fracao-minima-conhecida:0.0}") double fracaoMinima,
+                        @Value("${chatbot.margem-contexto:0.02}") double margemContexto,
                         @Value("${chatbot.contexto.ttl-minutos:30}") long ttlMinutos,
                         @Value("${chatbot.contexto.max-sessoes:10000}") int maxSessoes) {
         this.ultimaIntentPorSessao = new ContextoSessao(Duration.ofMinutes(ttlMinutos), maxSessoes, Clock.systemUTC());
-        this.politica = new PoliticaDecisao(limiar, margemMinima, fracaoMinima);
+        this.politica = new PoliticaDecisao(limiar, margemMinima, fracaoMinima, margemContexto);
         this.classifierService = classifierService;
         this.botResponseRepository = botResponseRepository;
         this.intentRepository = intentRepository;
@@ -104,7 +105,7 @@ public class ChatService {
                 .toList();
         long latenciaMs = (System.nanoTime() - inicio) / 1_000_000;
         return new ExplicarResponse(c.tokens(), c.fracaoConhecida(), top,
-                politica.getLimiar(), c.margem(), politica.getMargemMinima(), politica.getFracaoMinima(),
+                politica.getLimiar(), c.margem(), politica.getMargemMinima(), politica.getMargemContexto(), politica.getFracaoMinima(),
                 d.fallback() ? "fallback" : "resposta", d.motivo().codigo(), d.intent(), resposta, latenciaMs);
     }
 

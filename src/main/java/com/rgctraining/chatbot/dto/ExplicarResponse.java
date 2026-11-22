@@ -4,8 +4,8 @@ import java.util.List;
 
 /**
  * Resposta de POST /api/chat/explicar: o passo a passo da decisão.
- * margem = diferença observada entre a 1ª e a 2ª intent; margemMinima e
- * fracaoMinima são os valores configurados (assim como limiar).
+ * margem = diferença observada entre a 1ª e a 2ª intent; margemMinima,
+ * margemContexto e fracaoMinima são os valores configurados (assim como limiar).
  */
 public record ExplicarResponse(
         List<String> tokens,
@@ -14,6 +14,7 @@ public record ExplicarResponse(
         double limiar,
         double margem,
         double margemMinima,
+        double margemContexto,
         double fracaoMinima,
         String decisao,
         String motivo,

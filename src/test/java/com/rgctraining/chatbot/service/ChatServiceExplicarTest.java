@@ -32,8 +32,8 @@ class ChatServiceExplicarTest {
         respostas = mock(BotResponseRepository.class);
         intents = mock(IntentRepository.class);
         conversas = mock(ConversationRepository.class);
-        // limiar 0.40, margem 0.10, fração 0.5, TTL 30 min, 100 sessões
-        chat = new ChatService(classificador, respostas, intents, conversas, 0.40, 0.10, 0.5, 30, 100);
+        // limiar 0.40, margem 0.10, fração 0.5, margem de contexto 0.10, TTL 30 min, 100 sessões
+        chat = new ChatService(classificador, respostas, intents, conversas, 0.40, 0.10, 0.5, 0.10, 30, 100);
 
         Intent horario = new Intent();
         horario.setId(1L);

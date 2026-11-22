@@ -123,4 +123,38 @@ class PoliticaDecisaoTest {
         assertEquals("tokens_desconhecidos", Motivo.TOKENS_DESCONHECIDOS.codigo());
         assertEquals("contexto", Motivo.CONTEXTO.codigo());
     }
+
+    @Test
+    void contextoFuncionaComFallbackPorMargemDesligado() {
+        // margem mínima 0 (desligada), faixa de contexto 0.05
+        PoliticaDecisao p = new PoliticaDecisao(0.40, 0.0, 0.0, 0.05);
+        Classificacao apertada = classif(1.0, "plano_mensal", 0.80, "plano_anual", 0.78);
+
+        Decisao comContexto = p.decidir(apertada, "plano_anual");
+        assertEquals("plano_anual", comContexto.intent());
+        assertEquals(Motivo.CONTEXTO, comContexto.motivo());
+
+        // contexto que não ajuda: segue com a 1ª, sem fallback por margem
+        Decisao semAjuda = p.decidir(apertada, "horario_funcionamento");
+        assertFalse(semAjuda.fallback());
+        assertEquals("plano_mensal", semAjuda.intent());
+        assertEquals(Motivo.OK, semAjuda.motivo());
+        assertEquals("plano_mensal", p.decidir(apertada).intent());
+    }
+
+    @Test
+    void contextoSoDesempataDentroDaFaixaDeContexto() {
+        PoliticaDecisao p = new PoliticaDecisao(0.40, 0.0, 0.0, 0.01);
+        Decisao d = p.decidir(classif(1.0, "plano_mensal", 0.80, "plano_anual", 0.75), "plano_anual");
+        assertEquals("plano_mensal", d.intent()); // margem 0.05 > 0.01
+        assertEquals(Motivo.OK, d.motivo());
+    }
+
+    @Test
+    void contextoQueNaoAjudaCaiNoFallbackPorMargemQuandoLigada() {
+        PoliticaDecisao p = new PoliticaDecisao(0.40, 0.10, 0.0, 0.02);
+        Decisao d = p.decidir(classif(1.0, "plano_mensal", 0.80, "plano_anual", 0.75), "plano_anual");
+        assertTrue(d.fallback()); // margem 0.05: fora da faixa de contexto, abaixo da mínima
+        assertEquals(Motivo.MARGEM_PEQUENA, d.motivo());
+    }
 }
