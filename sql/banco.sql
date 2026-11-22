@@ -3119,6 +3119,7 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('Pode me ajudar com meu trabalho da faculdade?', NULL, 'fora_escopo'),
     ('Como faço para trocar o pneu do carro?', NULL, 'fora_escopo'),
     ('?', NULL, 'fora_escopo'),
+
     -- intents antes sem cobertura
     ('Qual a diferença entre o mensal e o anual?', 'comparar_planos', 'padrao'),
     ('Vale a pena pagar o anual ou fico no trimestral?', 'comparar_planos', 'variacao'),
@@ -3168,6 +3169,15 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('Funcionam aos domingos?', 'horario_fim_semana_feriado', 'padrao'),
     ('Qual o horário no sábado e domingo?', 'horario_fim_semana_feriado', 'variacao'),
     ('No feriado de Natal vocês funcionam?', 'horario_fim_semana_feriado', 'dificil'),
+
+    -- ambíguas: a intent esperada é a genérica mais provável
+    ('E os valores?', 'planos_valores', 'ambigua'),
+    ('Tem aula?', 'aulas_modalidades', 'ambigua'),
+    ('Qual o horário?', 'horario_funcionamento', 'ambigua'),
+    ('Pode criança?', 'idade_minima', 'ambigua'),
+    ('Preciso levar algum papel?', 'matricula', 'ambigua'),
+    ('Como funciona o plano?', 'planos_valores', 'ambigua'),
+    ('Quais os aparelhos?', 'estrutura', 'ambigua'),
 
     -- crianças por modalidade
     ('Meu garoto de 11 anos quer fazer boxe, pode?', 'crianca_boxe', 'variacao'),
