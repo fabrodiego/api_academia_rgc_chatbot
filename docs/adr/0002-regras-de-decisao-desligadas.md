@@ -45,3 +45,7 @@ Transparência: esta escolha foi feita **depois** de ver o resultado no teste. P
 - Produção mantém o comportamento medido; o ganho de `fora_escopo` das regras fica de fora.
 - As regras continuam testadas (JUnit) e podem ser ligadas por configuração.
 - Próximo passo, se houver tempo: separar um conjunto de validação e definir o custo relativo de erro × encaminhamento antes de calibrar.
+
+## Atualização (2026-11-22, ADR 0003)
+
+Com o tratamento do "aí", a calibração no treino passou a escolher margem 0,05 (limiar 0,46 e fração 1,0 iguais). Nos 188 casos: regras 116 (61,7 %) / 124 (66,0 %) contra 144 (76,6 %) / 155 (82,4 %) do padrão. A decisão de deixar as regras desligadas continua.

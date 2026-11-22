@@ -28,7 +28,7 @@ Usuário → POST /api/chat
 
 ## Regras de decisão: quem decide o quê
 
-**Ligado por padrão:** limiar 0,18, desempate por contexto (margem 0,02) e negação fundida. **Desligado por padrão:** fallback por margem (`margem-minima` 0) e por fração de tokens conhecidos (`fracao-minima-conhecida` 0). Os valores calibrados no treino (0,46 / 0,02 / 1,0) pioraram a acurácia nos casos de teste ao mandar ao humano perguntas que o bot acertava; ficam no código e no CSV, desligados por decisão de produto (ver `docs/adr/0002`).
+**Ligado por padrão:** limiar 0,18, desempate por contexto (margem 0,02) e negação fundida. **Desligado por padrão:** fallback por margem (`margem-minima` 0) e por fração de tokens conhecidos (`fracao-minima-conhecida` 0). Os valores calibrados no treino (0,46 / 0,05 / 1,0; eram 0,46 / 0,02 / 1,0 antes do ADR 0003) pioraram a acurácia nos casos de teste ao mandar ao humano perguntas que o bot acertava; ficam no código e no CSV, desligados por decisão de produto (ver `docs/adr/0002`).
 
 | Quem | Decide |
 |---|---|
@@ -43,9 +43,11 @@ Usuário → POST /api/chat
 
 **Negação.** "não/nao" era stopword e sumia ("Não quero mais ser aluno" virava "quero aluno" e caía em matrícula). Agora ele funde com o próximo token que não é stopword (`nao_quero`), igual no treino e na mensagem. Se a mensagem tem uma fusão que nenhuma frase de treino contém (ex.: `nao_estacionamento`), volta ao token simples (`estacionamento`), para a negação não apagar uma palavra conhecida. Configurável em `chatbot.negacao` (`ignorar`, `manter`, `fundir`, `fundir_com_recuo`). Comparação por leave-one-out nas 1.412 frases de treino (1-NN, acertos estrito / com equivalência): `ignorar` 700 / 743, `manter` 699 / 742, `fundir` 699 / 742, `fundir_com_recuo` 700 / 743. O treino tem poucas frases com negação (11), então o leave-one-out praticamente empata; a escolha por `fundir_com_recuo` é o empate que mantém a negação distinguível sem perder o que já funcionava.
 
+**"Aí".** No treino, "e aí" virava só o token `ai` ("e" é stopword), então qualquer pergunta terminada em "aí" ("Tem crossfit aí?", "Qual o horário aí?") era puxada para `saudacao`. Agora o "aí" é tratado pelo contexto, sem mudar a lista de stopwords: logo depois de um cumprimento ("e", "fala", "oi", "olá", "opa", "salve") vira o token `e_ai`; em qualquer outra posição é advérbio de lugar e sai. Nos 188 casos: 142 → 144 (estrita) e 153 → 155 (com equivalência), sem nenhum caso piorar; no leave-one-out do treino o total não muda. Ver `docs/adr/0003`.
+
 **Calibração dos três valores.** Varredura de limiar (0 a 0,60), margem (0 a 0,15) e fração mínima (0 a 1) por **leave-one-out só nas frases de treino**: cada frase é classificada por um modelo montado com todas as outras (IDF incluído). As frases da intent `fora_escopo` funcionam como negativas (certo = fallback ou `fora_escopo`); as demais acertam por igualdade ou equivalência pai → filha. Os casos de teste não entram na calibração. A curva completa (1.736 combinações) está em `docs/resultados/calibracao.csv`, gerada por `GET /api/avaliacao/calibracao`, com a linha escolhida marcada (`escolhido=1`).
 
-Critério: utilidade = acertos − respostas erradas (encaminhar a um humano custa 0; responder errado custa 1). O máximo da utilidade (limiar 0, margem 0,08, fração 1,0) responde menos da metade das frases, então vale entre as combinações com pelo menos 99% da utilidade máxima, a que **mais acerta**. Ponto escolhido pelo critério (hoje **desligado**, ver acima): **limiar 0,46, margem 0,02, fração mínima 1,0**. No leave-one-out: 655 acertos, 236 respostas erradas, 521 encaminhadas, 90 de 96 frases de `fora_escopo` rejeitadas; a configuração anterior (0,18 / 0 / 0) tinha 748 acertos e 591 respostas erradas. Limites desta escolha: o leave-one-out é mais pessimista que o uso real (tira da base a paráfrase mais próxima de cada frase) e a ponderação 1:1 entre erro e acerto é uma decisão de projeto; o CSV permite escolher outro ponto, mas **a escolha deve continuar sendo feita no treino, nunca nos casos de teste**.
+Critério: utilidade = acertos − respostas erradas (encaminhar a um humano custa 0; responder errado custa 1). O máximo da utilidade (limiar 0, margem 0,08, fração 1,0) responde menos da metade das frases, então vale entre as combinações com pelo menos 99% da utilidade máxima, a que **mais acerta**. Ponto escolhido pelo critério (hoje **desligado**, ver acima): **limiar 0,46, margem 0,05, fração mínima 1,0**. No leave-one-out: 616 acertos, 193 respostas erradas, 603 encaminhadas, 91 de 96 frases de `fora_escopo` rejeitadas; a configuração anterior (0,18 / 0 / 0) tem 748 acertos e 590 respostas erradas. Antes do tratamento do "aí" (ADR 0003) o ponto escolhido era margem 0,02 (655 acertos, 236 erradas, 521 encaminhadas). Limites desta escolha: o leave-one-out é mais pessimista que o uso real (tira da base a paráfrase mais próxima de cada frase) e a ponderação 1:1 entre erro e acerto é uma decisão de projeto; o CSV permite escolher outro ponto, mas **a escolha deve continuar sendo feita no treino, nunca nos casos de teste**.
 
 ## Escopo
 
@@ -265,9 +267,9 @@ mvn test
 
 | Configuração | Estrita | Com equiv. | Erradas / fallbacks | padrao | variacao | dificil | fora_escopo | ambigua |
 |---|---|---|---|---|---|---|---|---|
-| Padrão atual (0,18 / sem margem / sem fração, negação fundida) | 142 (75,5%) | 153 (81,4%) | 34 / 1 | 63/71 | 56/63 | 14/30 | 4/17 | 5/7 |
-| Regras calibradas no treino (0,46 / 0,02 / 1,0) | 116 (61,7%) | 124 (66,0%) | 13 / 51 | 51/71 | 39/63 | 9/30 | 13/17 | 4/7 |
-| 0,18 / 0 / 0 sem negação (`ignorar`) | 142 (75,5%) | 153 (81,4%) | 34 / 1 | 63/71 | 56/63 | 14/30 | 4/17 | 5/7 |
+| Padrão atual (0,18 / sem margem / sem fração, negação fundida) | 144 (76,6%) | 155 (82,4%) | 32 / 1 | 63/71 | 57/63 | 15/30 | 4/17 | 5/7 |
+| Regras calibradas no treino (0,46 / 0,05 / 1,0) | 116 (61,7%) | 124 (66,0%) | 9 / 55 | 51/71 | 39/63 | 9/30 | 13/17 | 4/7 |
+| 0,18 / 0 / 0 sem negação (`ignorar`) | 144 (76,6%) | 155 (82,4%) | 32 / 1 | 63/71 | 57/63 | 15/30 | 4/17 | 5/7 |
 | Baseline Naive Bayes | 109 (58,0%) | 130 (69,1%) | n/a | 42/71 | 45/63 | 17/30 | 4/17 | 1/7 |
 
 (colunas por tipo: acurácia estrita; "erradas / fallbacks" contam os erros com equivalência.) As regras calibradas trocaram respostas erradas por encaminhamentos ao humano e perderam acurácia, por isso ficam desligadas (ver acima). A negação não muda nenhum caso de teste; o único caso de negação do conjunto ("Não quero mais ser aluno") segue indo para `matricula` porque a margem (0,043) é maior que a de contexto.
