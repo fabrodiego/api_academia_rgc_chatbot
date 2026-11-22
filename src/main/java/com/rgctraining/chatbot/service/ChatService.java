@@ -3,6 +3,7 @@ package com.rgctraining.chatbot.service;
 import com.rgctraining.chatbot.model.BotResponse;
 import com.rgctraining.chatbot.model.Conversation;
 import com.rgctraining.chatbot.model.Intent;
+import com.rgctraining.chatbot.nlp.ClassificadorTfIdf;
 import com.rgctraining.chatbot.repository.BotResponseRepository;
 import com.rgctraining.chatbot.repository.ConversationRepository;
 import com.rgctraining.chatbot.repository.IntentRepository;
@@ -58,7 +59,7 @@ public class ChatService {
      * É a mesma decisão do chat, usada também pelo executor de casos de teste.
      */
     public RespostaChat gerarResposta(String mensagem) {
-        IntentClassifierService.Classificacao classificacao = classifierService.classificar(mensagem);
+        ClassificadorTfIdf.Classificacao classificacao = classifierService.classificar(mensagem);
 
         boolean fallback = classificacao.intentCodigo() == null || classificacao.score() < limiarFallback;
         if (fallback) {
