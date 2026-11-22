@@ -55,7 +55,7 @@ public final class ClassificadorTfIdf {
     }
 
     public Classificacao classificar(String mensagem, int k) {
-        List<String> tokens = preprocessador.processar(mensagem);
+        List<String> tokens = aplicarRecuo(preprocessador.processar(mensagem));
         double fracao = fracaoConhecida(tokens);
         double[] vetor = vectorizer.vetorizar(tokens);
 
@@ -73,6 +73,19 @@ public final class ClassificadorTfIdf {
             return Classificacao.vazia(tokens, fracao);
         }
         return new Classificacao(top.get(0).intent(), top.get(0).score(), top, tokens, fracao);
+    }
+
+    /** Só no modo FUNDIR_COM_RECUO: negação fundida desconhecida volta ao token simples. */
+    private List<String> aplicarRecuo(List<String> tokens) {
+        if (preprocessador.getModoNegacao() != Preprocessador.ModoNegacao.FUNDIR_COM_RECUO) {
+            return tokens;
+        }
+        List<String> saida = new ArrayList<>(tokens.size());
+        for (String t : tokens) {
+            boolean fundidoDesconhecido = t.startsWith(Preprocessador.PREFIXO_NEGACAO) && !vectorizer.conhece(t);
+            saida.add(fundidoDesconhecido ? t.substring(Preprocessador.PREFIXO_NEGACAO.length()) : t);
+        }
+        return saida;
     }
 
     private double fracaoConhecida(List<String> tokens) {

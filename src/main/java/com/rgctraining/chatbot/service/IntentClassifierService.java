@@ -8,6 +8,7 @@ import com.rgctraining.chatbot.nlp.Preprocessador;
 import com.rgctraining.chatbot.repository.IntentRepository;
 import com.rgctraining.chatbot.repository.TrainingPhraseRepository;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -20,7 +21,7 @@ public class IntentClassifierService {
 
     private final IntentRepository intentRepository;
     private final TrainingPhraseRepository trainingPhraseRepository;
-    private final Preprocessador preprocessador = new Preprocessador();
+    private final Preprocessador preprocessador;
 
     /**
      * Estado do modelo, imutável: classificador e mapas são montados fora e a
@@ -32,7 +33,9 @@ public class IntentClassifierService {
     private volatile Modelo modelo;
 
     public IntentClassifierService(IntentRepository intentRepository,
-                                    TrainingPhraseRepository trainingPhraseRepository) {
+                                    TrainingPhraseRepository trainingPhraseRepository,
+                                    @Value("${chatbot.negacao:fundir_com_recuo}") String negacao) {
+        this.preprocessador = new Preprocessador(Preprocessador.ModoNegacao.de(negacao));
         this.intentRepository = intentRepository;
         this.trainingPhraseRepository = trainingPhraseRepository;
     }

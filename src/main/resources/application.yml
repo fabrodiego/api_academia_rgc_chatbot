@@ -17,6 +17,8 @@ spring:
 
 chatbot:
   fallback-threshold: 0.18   # abaixo disso, encaminha para atendimento humano
+  # tratamento de "não": ignorar | manter | fundir | fundir_com_recuo (ver README e docs/resultados/calibracao.csv)
+  negacao: fundir_com_recuo
   admin-key: ${ADMIN_KEY:}   # chave dos endpoints de dev (vazia = bloqueado)
 
 
