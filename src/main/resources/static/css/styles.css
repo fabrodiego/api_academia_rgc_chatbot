@@ -217,3 +217,4 @@ footer{padding:28px 0;border-top:1px solid var(--line);color:var(--mute);font-si
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 @media print{.js-reveal .reveal{opacity:1!important;transform:none!important}#fab,#chat,header{display:none!important}}
+footer a{color:var(--mute)}

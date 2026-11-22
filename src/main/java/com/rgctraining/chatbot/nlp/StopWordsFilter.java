@@ -40,6 +40,10 @@ public class StopWordsFilter {
         return semAcento.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
     }
 
+    public boolean ehStopword(String token) {
+        return stopWords.contains(token);
+    }
+
     public List<String> filtrar(List<String> tokens) {
         return tokens.stream()
                 .filter(t -> !stopWords.contains(t))

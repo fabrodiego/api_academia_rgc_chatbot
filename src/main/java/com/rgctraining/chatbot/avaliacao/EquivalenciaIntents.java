@@ -60,4 +60,22 @@ public final class EquivalenciaIntents {
         if (esperada == null) return FORA_ESCOPO.equals(obtida);
         return obtida != null && FILHAS_POR_PAI.getOrDefault(esperada, Set.of()).contains(obtida);
     }
+
+    /**
+     * Mesma família no mapa pai -> filhas: a própria intent, pai e filha, ou duas
+     * filhas do mesmo pai (ex.: plano_mensal e plano_anual). Usado pelo contexto
+     * de sessão para tratar "e o anual?" como seguimento de "quanto custa o mensal?".
+     */
+    public static boolean mesmaFamilia(String a, String b) {
+        if (a == null || b == null) return false;
+        if (a.equals(b)) return true;
+        for (Map.Entry<String, Set<String>> e : FILHAS_POR_PAI.entrySet()) {
+            String pai = e.getKey();
+            Set<String> filhas = e.getValue();
+            boolean aNaFamilia = a.equals(pai) || filhas.contains(a);
+            boolean bNaFamilia = b.equals(pai) || filhas.contains(b);
+            if (aNaFamilia && bNaFamilia) return true;
+        }
+        return false;
+    }
 }

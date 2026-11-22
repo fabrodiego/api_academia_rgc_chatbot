@@ -88,6 +88,11 @@ public class TfIdfVectorizer {
         return vetoresDoCorpus;
     }
 
+    /** O termo existe no vocabulário de treino? */
+    public boolean conhece(String termo) {
+        return indiceDoTermo.containsKey(termo);
+    }
+
     public int tamanhoVocabulario() {
         return vocabulario.size();
     }

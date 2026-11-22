@@ -4,7 +4,7 @@
 -- as permissões continuam). Roda em uma transação: se der erro, nada é gravado.
 -- ATENÇÃO: o TRUNCATE abaixo também apaga as conversas. Em produção, prefira
 -- scripts incrementais (só INSERT/UPDATE).
--- Base: 49 intents, 97 respostas, 1412 frases de treino, 127 casos de teste.
+-- Base: 49 intents, 97 respostas, 1412 frases de treino, 188 casos de teste.
 
 BEGIN;
 
@@ -70,7 +70,10 @@ TRUNCATE test_cases, training_phrases, bot_responses, conversations, intents RES
 -- intent_obtida, score, resposta_obtida, resultado e executado_em são preenchidos ao rodar os testes.
 ALTER TABLE test_cases DROP COLUMN IF EXISTS resposta_esperada;
 ALTER TABLE test_cases ADD COLUMN IF NOT EXISTS intent_esperada VARCHAR(80) REFERENCES intents(codigo) ON UPDATE CASCADE;
-ALTER TABLE test_cases ADD COLUMN IF NOT EXISTS tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('padrao', 'variacao', 'dificil', 'fora_escopo'));
+ALTER TABLE test_cases ADD COLUMN IF NOT EXISTS tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('padrao', 'variacao', 'dificil', 'fora_escopo', 'ambigua'));
+-- bancos já existentes: troca a regra antiga do tipo pela nova (com 'ambigua')
+ALTER TABLE test_cases DROP CONSTRAINT IF EXISTS test_cases_tipo_check;
+ALTER TABLE test_cases ADD CONSTRAINT test_cases_tipo_check CHECK (tipo IN ('padrao', 'variacao', 'dificil', 'fora_escopo', 'ambigua'));
 ALTER TABLE test_cases ADD COLUMN IF NOT EXISTS intent_obtida VARCHAR(80);
 ALTER TABLE test_cases ADD COLUMN IF NOT EXISTS score NUMERIC(5,4);
 ALTER TABLE test_cases ADD COLUMN IF NOT EXISTS executado_em TIMESTAMP;
@@ -3116,6 +3119,73 @@ INSERT INTO test_cases (pergunta, intent_esperada, tipo) VALUES
     ('Pode me ajudar com meu trabalho da faculdade?', NULL, 'fora_escopo'),
     ('Como faço para trocar o pneu do carro?', NULL, 'fora_escopo'),
     ('?', NULL, 'fora_escopo'),
+
+    -- intents antes sem cobertura
+    ('Qual a diferença entre o mensal e o anual?', 'comparar_planos', 'padrao'),
+    ('Vale a pena pagar o anual ou fico no trimestral?', 'comparar_planos', 'variacao'),
+    ('Quanto eu economizo pegando o plano mais longo?', 'comparar_planos', 'dificil'),
+    ('Que documento preciso levar na recepção para me matricular?', 'documentos_matricula', 'padrao'),
+    ('Basta o RG para entrar?', 'documentos_matricula', 'variacao'),
+    ('Tenho que levar comprovante de residência?', 'documentos_matricula', 'dificil'),
+    ('Pode me explicar o plano mensal?', 'plano_mensal', 'padrao'),
+    ('Quanto é o mensal por mês?', 'plano_mensal', 'variacao'),
+    ('O mensal prende em contrato?', 'plano_mensal', 'dificil'),
+    ('Detalhes do plano anual', 'plano_anual', 'padrao'),
+    ('O anual é o mais barato por mês?', 'plano_anual', 'variacao'),
+    ('Plano de 12 meses compensa?', 'plano_anual', 'dificil'),
+    ('Pode explicar o plano trimestral?', 'plano_trimestral', 'padrao'),
+    ('Quanto custa o de 3 meses?', 'plano_trimestral', 'variacao'),
+    ('No trimestral posso levar um amigo?', 'plano_trimestral', 'dificil'),
+    ('Cobram taxa para se matricular?', 'taxa_matricula', 'padrao'),
+    ('Existe taxa de adesão?', 'taxa_matricula', 'variacao'),
+    ('Em qual plano a matrícula sai de graça?', 'taxa_matricula', 'dificil'),
+    ('Como é a aula RGC Kids?', 'aula_kids', 'padrao'),
+    ('Vocês têm atividade para criança pequena?', 'aula_kids', 'variacao'),
+    ('Quanto tempo dura a aula das crianças?', 'aula_kids', 'dificil'),
+    ('Me conta como é a FitDance', 'aula_danca', 'padrao'),
+    ('Quero dançar para queimar caloria, tem aula?', 'aula_danca', 'variacao'),
+    ('Quanto dura a aula de dança?', 'aula_danca', 'dificil'),
+    ('Me explica a aula de yoga', 'aula_yoga', 'padrao'),
+    ('Quero relaxar e alongar, tem yoga?', 'aula_yoga', 'variacao'),
+    ('Yoga ajuda na postura?', 'aula_yoga', 'dificil'),
+    ('Como funciona a aula de muay thai?', 'aula_muay_thai', 'padrao'),
+    ('Qual a duração da aula de muay thai?', 'aula_muay_thai', 'variacao'),
+    ('Tem aula daquela luta tailandesa?', 'aula_muay_thai', 'dificil'),
+    ('Me conta como é o boxe de vocês', 'aula_boxe', 'padrao'),
+    ('Fazendo boxe eu emagreço?', 'aula_boxe', 'variacao'),
+    ('Quero socar saco de pancada, tem aula?', 'aula_boxe', 'dificil'),
+    ('Vocês têm aula de luta?', 'aula_lutas', 'padrao'),
+    ('Quero aprender defesa pessoal', 'aula_lutas', 'variacao'),
+    ('Quais artes marciais vocês oferecem?', 'aula_lutas', 'variacao'),
+    ('Como é a aula de spinning?', 'aula_bike', 'padrao'),
+    ('Qual a duração da aula de bike?', 'aula_bike', 'variacao'),
+    ('Aula de pedalar em grupo faz bem pro joelho?', 'aula_bike', 'dificil'),
+    ('Tem aula de natação para adulto?', 'modalidades_nao_oferecidas', 'padrao'),
+    ('Vocês oferecem pilates de solo?', 'modalidades_nao_oferecidas', 'variacao'),
+    ('Quero fazer crossfit, onde treino?', 'modalidades_nao_oferecidas', 'dificil'),
+    ('Os equipamentos são modernos?', 'equipamentos', 'padrao'),
+    ('Com que frequência trocam os aparelhos?', 'equipamentos', 'variacao'),
+    ('Tem muita fila nos aparelhos à noite?', 'equipamentos', 'dificil'),
+    ('Funcionam aos domingos?', 'horario_fim_semana_feriado', 'padrao'),
+    ('Qual o horário no sábado e domingo?', 'horario_fim_semana_feriado', 'variacao'),
+    ('No feriado de Natal vocês funcionam?', 'horario_fim_semana_feriado', 'dificil'),
+
+    -- ambíguas: a intent esperada é a genérica mais provável
+    ('E os valores?', 'planos_valores', 'ambigua'),
+    ('Tem aula?', 'aulas_modalidades', 'ambigua'),
+    ('Qual o horário?', 'horario_funcionamento', 'ambigua'),
+    ('Pode criança?', 'idade_minima', 'ambigua'),
+    ('Preciso levar algum papel?', 'matricula', 'ambigua'),
+    ('Como funciona o plano?', 'planos_valores', 'ambigua'),
+    ('Quais os aparelhos?', 'estrutura', 'ambigua'),
+
+    -- fora do escopo, mas com palavras do negócio
+    ('Quantas calorias tem um prato de arroz com feijão?', NULL, 'fora_escopo'),
+    ('Meu carro precisa trocar o óleo, vocês indicam mecânico?', NULL, 'fora_escopo'),
+    ('Em quem você vai votar para presidente?', NULL, 'fora_escopo'),
+    ('Como funciona o plano de saúde do SUS?', NULL, 'fora_escopo'),
+    ('Qual o horário do jogo do Brasil?', NULL, 'fora_escopo'),
+    ('Qual o melhor suplemento de creatina para comprar?', NULL, 'fora_escopo'),
 
     -- crianças por modalidade
     ('Meu garoto de 11 anos quer fazer boxe, pode?', 'crianca_boxe', 'variacao'),

@@ -16,7 +16,17 @@ spring:
         default_schema: chatbot
 
 chatbot:
-  fallback-threshold: 0.18   # abaixo disso, encaminha para atendimento humano
+  # Regras de decisão. Valores calibrados no treino (0.46/0.02/1.0) estão em
+  # docs/resultados/calibracao.csv; desligados por decisão de produto - ver docs/adr/0002.
+  fallback-threshold: 0.18        # score da 1ª intent abaixo disso -> atendimento humano
+  margem-minima: 0.0              # 1ª - 2ª intent abaixo disso -> fallback (0 = desligada)
+  fracao-minima-conhecida: 0.0    # fração mínima de tokens no vocabulário de treino (0 = desligada)
+  margem-contexto: 0.02           # 1ª - 2ª abaixo disso: a última intent da sessão desempata (se ajudar)
+  contexto:
+    ttl-minutos: 30        # sessão sem atividade por esse tempo perde a última intent
+    max-sessoes: 10000     # teto do mapa em memória (descarta expiradas e depois a menos usada)
+  # tratamento de "não": ignorar | manter | fundir | fundir_com_recuo (ver README e docs/resultados/calibracao.csv)
+  negacao: fundir_com_recuo
   admin-key: ${ADMIN_KEY:}   # chave dos endpoints de dev (vazia = bloqueado)
 
 
