@@ -21,10 +21,17 @@ public class IntentClassifierService {
     private final Tokenizer tokenizer = new Tokenizer();
     private final StopWordsFilter stopWordsFilter = new StopWordsFilter();
 
-    private TfIdfVectorizer vectorizer;
-    // índice paralelo: vetoresDoCorpus[i] corresponde a intentCodigoPorFrase[i]
-    private List<String> intentCodigoPorFrase = new ArrayList<>();
-    private Map<String, Long> intentIdPorCodigo = new HashMap<>();
+    /**
+     * Estado do modelo, imutável: vetorizador e mapas são montados fora e a
+     * referência é trocada de uma vez só no recarregar (leitores concorrentes
+     * nunca veem um modelo pela metade).
+     */
+    private record Modelo(TfIdfVectorizer vectorizer,
+                          // índice paralelo: vetoresDoCorpus[i] corresponde a intentCodigoPorFrase[i]
+                          List<String> intentCodigoPorFrase,
+                          Map<String, Long> intentIdPorCodigo) {}
+
+    private volatile Modelo modelo;
 
     public IntentClassifierService(IntentRepository intentRepository,
                                     TrainingPhraseRepository trainingPhraseRepository) {
@@ -36,17 +43,16 @@ public class IntentClassifierService {
     @PostConstruct
     public void carregarModelo() {
         List<Intent> intents = intentRepository.findAll();
-        for (Intent intent : intents) {
-            intentIdPorCodigo.put(intent.getCodigo(), intent.getId());
-        }
+        Map<String, Long> intentIdPorCodigo = new HashMap<>();
         Map<Long, String> codigoPorId = new HashMap<>();
         for (Intent intent : intents) {
+            intentIdPorCodigo.put(intent.getCodigo(), intent.getId());
             codigoPorId.put(intent.getId(), intent.getCodigo());
         }
 
         List<TrainingPhrase> frases = trainingPhraseRepository.findAll();
         List<List<String>> corpusTokenizado = new ArrayList<>();
-        intentCodigoPorFrase = new ArrayList<>();
+        List<String> intentCodigoPorFrase = new ArrayList<>();
 
         for (TrainingPhrase frase : frases) {
             List<String> tokens = stopWordsFilter.filtrar(tokenizer.tokenize(frase.getTexto()));
@@ -54,7 +60,8 @@ public class IntentClassifierService {
             intentCodigoPorFrase.add(codigoPorId.get(frase.getIntentId()));
         }
 
-        this.vectorizer = new TfIdfVectorizer(corpusTokenizado);
+        this.modelo = new Modelo(new TfIdfVectorizer(corpusTokenizado),
+                List.copyOf(intentCodigoPorFrase), Map.copyOf(intentIdPorCodigo));
     }
 
     /** Recarrega o modelo (chame depois de alterar frases de treino no banco, sem reiniciar a aplicação). */
@@ -69,19 +76,20 @@ public class IntentClassifierService {
      * com todas as frases de treino. Retorna a intenção da frase mais parecida.
      */
     public Classificacao classificar(String mensagem) {
+        Modelo m = this.modelo; // uma leitura só: vetorizador e rótulos do mesmo modelo
         List<String> tokens = stopWordsFilter.filtrar(tokenizer.tokenize(mensagem));
-        double[] vetorMensagem = vectorizer.vetorizar(tokens);
+        double[] vetorMensagem = m.vectorizer().vetorizar(tokens);
 
         CosineSimilarity cosine = new CosineSimilarity();
         double melhorScore = -1;
         String melhorIntent = null;
 
-        List<double[]> vetoresCorpus = vectorizer.getVetoresDoCorpus();
+        List<double[]> vetoresCorpus = m.vectorizer().getVetoresDoCorpus();
         for (int i = 0; i < vetoresCorpus.size(); i++) {
             double score = cosine.calcular(vetorMensagem, vetoresCorpus.get(i));
             if (score > melhorScore) {
                 melhorScore = score;
-                melhorIntent = intentCodigoPorFrase.get(i);
+                melhorIntent = m.intentCodigoPorFrase().get(i);
             }
         }
 

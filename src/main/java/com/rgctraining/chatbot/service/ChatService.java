@@ -73,10 +73,7 @@ public class ChatService {
     }
 
     private String buscarRespostaAleatoria(String intentCodigo) {
-        Intent intent = intentRepository.findAll().stream()
-                .filter(i -> i.getCodigo().equals(intentCodigo))
-                .findFirst()
-                .orElse(null);
+        Intent intent = intentRepository.findByCodigo(intentCodigo).orElse(null);
         if (intent == null) {
             return RESPOSTA_FALLBACK;
         }
