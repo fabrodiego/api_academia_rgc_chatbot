@@ -20,8 +20,21 @@ Usuário → POST /api/chat
 - **Base de conhecimento**: tabelas `intents`, `training_phrases`, `bot_responses`.
 - **Avaliação**: tabela `test_cases` com a intenção esperada de cada pergunta (acurácia e matriz de confusão).
 - **Fallback controlado**: limiar configurável via `chatbot.fallback-threshold`.
-- **Contexto de sessão**: última intenção detectada mantida por `sessionId`.
+- **Sem contexto de conversa**: cada mensagem é classificada isoladamente. O `ChatService` guarda a última intenção por `sessionId` em memória, mas esse valor não é usado em nenhuma decisão (não há resolução de perguntas de seguimento como "e o anual?").
 - **Log de conversas**: toda interação é persistida, servindo de base para avaliação.
+
+## Escopo
+
+**O que o bot responde** (assuntos da academia, conforme as intents do `sql/banco.sql`):
+
+- Social: saudação, despedida, agradecimento e perguntas sobre o próprio assistente.
+- Informações da academia: horário (inclusive sábados, domingos e feriados), endereço, contato, estacionamento, estrutura e equipamentos, acesso (catraca/biometria) e idade mínima (inclusive criança por modalidade).
+- Planos e matrícula: planos e valores (mensal, trimestral, anual), comparação entre planos, matrícula, documentos, taxa, descontos, troca de plano, cancelamento e trancamento.
+- Financeiro: formas de pagamento e mensalidade atrasada.
+- Serviços e aulas: personal trainer, avaliação física, aula experimental, modalidades (Kids, FitDance, Yoga, Muay Thai, Boxe, Bike), grade de horários e modalidades que a RGC não oferece.
+- Suporte: pedido de atendimento humano, reclamações e sugestões.
+
+**O que o bot não responde**: qualquer assunto sem relação com a academia (clima, câmbio, filmes, contas, trabalho de faculdade etc.). Nesses casos a resposta é a da intent `fora_escopo` (ou o fallback, se a similaridade ficar abaixo do limiar), que redireciona para os temas da RGC e oferece o atendimento humano (WhatsApp/recepção).
 
 ## Stack
 
@@ -67,6 +80,12 @@ A aplicação lê a configuração via variáveis de ambiente:
 | `ADMIN_KEY`   | — (sem ela, `feedback`, `recarregar-modelo` e `avaliacao` ficam bloqueados) |
 
 Nenhuma credencial é versionada no repositório.
+
+## Pré-requisitos
+
+- Java 17
+- Maven 3.9+
+- PostgreSQL (qualquer versão recente) com um banco criado, ex.: `academia_rgc_chatbot`
 
 ## Executando
 
@@ -136,12 +155,34 @@ Métricas devolvidas:
 
 | Campo | O que é |
 |---|---|
-| `acuracia` | Acertos / total. Critério estrito: intenção obtida igual à esperada |
-| `porTipo` | Acurácia separada por tipo de caso |
+| `acuracia` | Acurácia **estrita**: intenção obtida igual à esperada (esperada `NULL` só acerta no fallback) |
+| `acuraciaEquivalencia` (`acertosEquivalencia`) | Acurácia **com a regra de equivalência** (ver abaixo) |
+| `porTipo` | Acerto e acurácia por tipo de caso, nas duas métricas |
+| `acertosPorEquivalencia` | Casos que erram no critério estrito mas acertam pela equivalência |
 | `taxaFallback` | Fração das perguntas que caíram no fallback |
 | `porClasse`, `precisaoMacro`, `recallMacro` | Precisão e recall por intenção e a média entre as intenções testadas. O fallback conta como a classe `(fallback)` |
 | `matrizConfusao` | `esperada → obtida → quantidade` |
-| `erros` | Casos que erraram, com intenção esperada, obtida e score |
+| `erros` | Casos que erram mesmo com a equivalência, com intenção esperada, obtida e score |
+
+**Regra de equivalência.** Além do critério estrito, o relatório traz a acurácia
+com equivalência (`EquivalenciaIntents`), que também aceita:
+
+1. Esperado `NULL` (fora do escopo): acerta se o bot cair no fallback **ou** na intent `fora_escopo`, pois as duas são o comportamento correto (encaminhar sem responder o assunto).
+2. Esperado = intent genérica (pai): acerta se a obtida for uma especialização (filha) dela, ex.: `planos_valores` aceita `plano_mensal`, `plano_trimestral` e `plano_anual`. A relação vale só de pai para filha: quem espera a filha **não** aceita o pai nem uma irmã.
+
+O mapa pai → filhas é uma constante em `EquivalenciaIntents`, montado a partir
+da taxonomia das intents no `sql/banco.sql` (pelo significado de cada uma) e
+definido **antes** de olhar quais testes erravam. Isso evita uma métrica
+circular, em que a regra seria moldada para "consertar" os erros. Mudanças no
+mapa devem ser justificadas pela taxonomia, nunca pelo resultado dos testes.
+
+Fica de fora de propósito `horario_funcionamento` → `horario_fim_semana_feriado`:
+uma pergunta geral de horário ("Que horas vocês abrem?") respondida só com o
+horário de fim de semana não atende o cliente, então conta como erro.
+
+A matriz de confusão e precisão/recall continuam usando a intent realmente
+obtida. O campo `resultado` gravado em `test_cases` (`ACERTO`/`ERRO`) segue a
+regra **com** equivalência; a acurácia estrita só aparece nas métricas.
 
 **Separação entre treino e teste.** Nenhum caso de teste pode ser igual a uma
 frase de treino depois de normalizar (minúsculas, sem acento, sem pontuação,
@@ -152,7 +193,11 @@ e não ajuste o treino para acertar um caso de teste específico.
 
 O usuário do banco precisa de permissão de `UPDATE` em `test_cases`.
 
-Testes automatizados do cálculo das métricas: `mvn test`.
+Testes automatizados (cálculo das métricas, regra de equivalência e separação treino/teste; não exigem banco):
+
+```bash
+mvn test
+```
 
 ## Aprendizado por feedback confirmado
 
