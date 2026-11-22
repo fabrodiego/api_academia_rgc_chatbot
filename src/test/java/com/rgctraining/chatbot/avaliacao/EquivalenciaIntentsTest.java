@@ -30,7 +30,6 @@ class EquivalenciaIntentsTest {
         assertTrue(acertoComEquivalencia("planos_valores", "plano_mensal"));
         assertTrue(acertoComEquivalencia("aulas_modalidades", "aula_yoga"));
         assertTrue(acertoComEquivalencia("idade_minima", "crianca_boxe"));
-        assertTrue(acertoComEquivalencia("horario_funcionamento", "horario_fim_semana_feriado"));
         assertFalse(acertoEstrito("planos_valores", "plano_mensal"));
     }
 
@@ -38,6 +37,11 @@ class EquivalenciaIntentsTest {
     void filhaNaoAceitaPai() {
         assertFalse(acertoComEquivalencia("plano_mensal", "planos_valores"));
         assertFalse(acertoComEquivalencia("horario_fim_semana_feriado", "horario_funcionamento"));
+    }
+
+    @Test
+    void horarioGeralNaoAceitaSoFimDeSemana() {
+        assertFalse(acertoComEquivalencia("horario_funcionamento", "horario_fim_semana_feriado"));
     }
 
     @Test

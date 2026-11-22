@@ -16,6 +16,10 @@ import java.util.Set;
  * O mapa foi montado a partir da taxonomia das intents em sql/banco.sql (pela
  * descrição/significado de cada intent), antes de olhar quais testes erraram,
  * para a métrica não ficar circular. Só entram especializações inequívocas.
+ *
+ * Fora de propósito: horario_funcionamento -> horario_fim_semana_feriado. Uma
+ * pergunta geral de horário respondida só com o fim de semana não atende o
+ * cliente, então continua sendo erro.
  */
 public final class EquivalenciaIntents {
 
@@ -38,8 +42,6 @@ public final class EquivalenciaIntents {
                     "crianca_bike", "crianca_danca", "crianca_yoga"),
             // crianca_lutas é o genérico de criança em luta (Boxe e Muay Thai)
             "crianca_lutas", CRIANCA_LUTA,
-            // horário geral da academia; fim de semana/feriado é um recorte dele
-            "horario_funcionamento", Set.of("horario_fim_semana_feriado"),
             // matricula já cobre "documentos e taxa" na própria descrição
             "matricula", Set.of("documentos_matricula", "taxa_matricula"),
             // estrutura cobre "equipamentos e aparelhos" na própria descrição

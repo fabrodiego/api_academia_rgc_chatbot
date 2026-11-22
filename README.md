@@ -176,6 +176,10 @@ definido **antes** de olhar quais testes erravam. Isso evita uma métrica
 circular, em que a regra seria moldada para "consertar" os erros. Mudanças no
 mapa devem ser justificadas pela taxonomia, nunca pelo resultado dos testes.
 
+Fica de fora de propósito `horario_funcionamento` → `horario_fim_semana_feriado`:
+uma pergunta geral de horário ("Que horas vocês abrem?") respondida só com o
+horário de fim de semana não atende o cliente, então conta como erro.
+
 A matriz de confusão e precisão/recall continuam usando a intent realmente
 obtida. O campo `resultado` gravado em `test_cases` (`ACERTO`/`ERRO`) segue a
 regra **com** equivalência; a acurácia estrita só aparece nas métricas.
