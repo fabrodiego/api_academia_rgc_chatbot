@@ -261,16 +261,16 @@ Testes automatizados (cálculo das métricas, regra de equivalência e separaç�
 mvn test
 ```
 
-### Resultados nos 127 casos de teste
+### Resultados nos 188 casos de teste
 
-| | Estrita | Com equivalência | padrao | variacao | dificil | fora_escopo |
-|---|---|---|---|---|---|---|
-| TF-IDF só com limiar 0,18 (antes das regras) | 103/127 (81,1%) | 111/127 (87,4%) | 52/55 | 43/46 | 4/15 | 4/11 |
-| (mesma configuração antiga com a negação fundida: idêntico) | 103/127 | 111/127 | 52/55 | 43/46 | 4/15 | 4/11 |
-| TF-IDF + regras calibradas no treino (atual) | 88/127 (69,3%) | 95/127 (74,8%) | 44/55 | 35/46 | 2/15 | 7/11 |
-| Baseline Naive Bayes | 67/127 (52,8%) | 80/127 (63,0%) | 28/55 | 29/46 | 6/15 | 4/11 |
+| Configuração | Estrita | Com equiv. | Erradas / fallbacks | padrao | variacao | dificil | fora_escopo | ambigua |
+|---|---|---|---|---|---|---|---|---|
+| Padrão atual (0,18 / sem margem / sem fração, negação fundida) | 142 (75,5%) | 153 (81,4%) | 34 / 1 | 63/71 | 56/63 | 14/30 | 4/17 | 5/7 |
+| Regras calibradas no treino (0,46 / 0,02 / 1,0) | 116 (61,7%) | 124 (66,0%) | 13 / 51 | 51/71 | 39/63 | 9/30 | 13/17 | 4/7 |
+| 0,18 / 0 / 0 sem negação (`ignorar`) | 142 (75,5%) | 153 (81,4%) | 34 / 1 | 63/71 | 56/63 | 14/30 | 4/17 | 5/7 |
+| Baseline Naive Bayes | 109 (58,0%) | 130 (69,1%) | n/a | 42/71 | 45/63 | 17/30 | 4/17 | 1/7 |
 
-(colunas por tipo: acurácia estrita.) As regras novas **reduziram** a acurácia nos casos de teste: a calibração no treino (leave-one-out) escolheu um ponto conservador, e dos 32 erros restantes (com equivalência) 23 são casos que caíram no fallback, a maioria com score alto mas com uma palavra fora do vocabulário (fração mínima 1,0) ou score abaixo de 0,46. Em troca, o bot responde errado menos vezes (9 respostas erradas contra 16 antes, todas as 16 sem nenhum fallback) e encaminha mais ao humano. A calibração não foi refeita olhando esses casos: seria vazamento do teste para os parâmetros.
+(colunas por tipo: acurácia estrita; "erradas / fallbacks" contam os erros com equivalência.) As regras calibradas trocaram respostas erradas por encaminhamentos ao humano e perderam acurácia, por isso ficam desligadas (ver acima). A negação não muda nenhum caso de teste; o único caso de negação do conjunto ("Não quero mais ser aluno") segue indo para `matricula` porque a margem (0,043) é maior que a de contexto.
 
 ## Aprendizado por feedback confirmado
 
