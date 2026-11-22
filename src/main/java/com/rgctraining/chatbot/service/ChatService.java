@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import java.time.Clock;
+import java.time.Duration;
 
 @Service
 public class ChatService {
@@ -21,14 +21,16 @@ public class ChatService {
     private static final String RESPOSTA_FALLBACK =
             "Não entendi bem sua pergunta. Vou encaminhar para um atendente humano da Academia RGC Training te responder em breve.";
 
+    public static final String SESSAO_ANONIMA = "anonimo";
+
     private final IntentClassifierService classifierService;
     private final BotResponseRepository botResponseRepository;
     private final IntentRepository intentRepository;
     private final ConversationRepository conversationRepository;
     private final Random random = new Random();
 
-    // contexto mínimo: última intenção detectada por sessão (em memória)
-    private final Map<String, String> ultimaIntentPorSessao = new ConcurrentHashMap<>();
+    // contexto mínimo: última intenção respondida por sessão (em memória, com TTL e tamanho máximo)
+    private final ContextoSessao ultimaIntentPorSessao;
 
     private final PoliticaDecisao politica;
 
@@ -38,7 +40,10 @@ public class ChatService {
                         ConversationRepository conversationRepository,
                         @Value("${chatbot.fallback-threshold:0.18}") double limiar,
                         @Value("${chatbot.margem-minima:0.0}") double margemMinima,
-                        @Value("${chatbot.fracao-minima-conhecida:0.0}") double fracaoMinima) {
+                        @Value("${chatbot.fracao-minima-conhecida:0.0}") double fracaoMinima,
+                        @Value("${chatbot.contexto.ttl-minutos:30}") long ttlMinutos,
+                        @Value("${chatbot.contexto.max-sessoes:10000}") int maxSessoes) {
+        this.ultimaIntentPorSessao = new ContextoSessao(Duration.ofMinutes(ttlMinutos), maxSessoes, Clock.systemUTC());
         this.politica = new PoliticaDecisao(limiar, margemMinima, fracaoMinima);
         this.classifierService = classifierService;
         this.botResponseRepository = botResponseRepository;
@@ -49,27 +54,47 @@ public class ChatService {
     public record RespostaChat(String resposta, String intentDetectado, double score, boolean fallback) {}
 
     public RespostaChat responder(String sessionId, String mensagem) {
-        RespostaChat r = gerarResposta(mensagem);
-        if (!r.fallback()) {
-            ultimaIntentPorSessao.put(sessionId, r.intentDetectado());
+        RespostaChat r = gerarResposta(mensagem, ultimaIntentDa(sessionId));
+        if (!r.fallback() && usaContexto(sessionId)) {
+            ultimaIntentPorSessao.registrar(sessionId, r.intentDetectado());
         }
         registrarLog(sessionId, mensagem, r.intentDetectado(), r.score(), r.resposta());
         return r;
     }
 
     /**
-     * Decide a resposta sem gravar nada (classificação + regra de fallback).
-     * É a mesma decisão do chat, usada também pelo executor de casos de teste.
+     * Decide a resposta sem gravar nada e sem contexto de sessão (classificação +
+     * regras de decisão). Usada pelo executor de casos de teste, que são perguntas isoladas.
      */
     public RespostaChat gerarResposta(String mensagem) {
-        ClassificadorTfIdf.Classificacao classificacao = classifierService.classificar(mensagem);
+        return gerarResposta(mensagem, null);
+    }
 
-        PoliticaDecisao.Decisao decisao = politica.decidir(classificacao);
-        if (decisao.fallback()) {
-            return new RespostaChat(RESPOSTA_FALLBACK, null, classificacao.score(), true);
+    public RespostaChat gerarResposta(String mensagem, String ultimaIntent) {
+        Analise a = analisar(mensagem, ultimaIntent);
+        if (a.decisao().fallback()) {
+            return new RespostaChat(RESPOSTA_FALLBACK, null, a.decisao().score(), true);
         }
-        String intent = decisao.intent();
-        return new RespostaChat(buscarRespostaAleatoria(intent), intent, classificacao.score(), false);
+        String intent = a.decisao().intent();
+        return new RespostaChat(buscarRespostaAleatoria(intent), intent, a.decisao().score(), false);
+    }
+
+    /** Classificação + decisão, sem montar resposta nem gravar nada. */
+    public record Analise(ClassificadorTfIdf.Classificacao classificacao, PoliticaDecisao.Decisao decisao) {}
+
+    public Analise analisar(String mensagem, String ultimaIntent) {
+        ClassificadorTfIdf.Classificacao classificacao = classifierService.classificar(mensagem);
+        return new Analise(classificacao, politica.decidir(classificacao, ultimaIntent));
+    }
+
+    /** Última intent da sessão (só leitura); null se não há, expirou ou a sessão é anônima. */
+    public String ultimaIntentDa(String sessionId) {
+        return usaContexto(sessionId) ? ultimaIntentPorSessao.ultimaIntent(sessionId).orElse(null) : null;
+    }
+
+    // sem sessionId o controller usa "anonimo", compartilhado por todo mundo: não vale como contexto
+    private static boolean usaContexto(String sessionId) {
+        return sessionId != null && !SESSAO_ANONIMA.equals(sessionId);
     }
 
     public double getLimiarFallback() {

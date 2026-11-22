@@ -20,7 +20,7 @@ Usuário → POST /api/chat
 - **Base de conhecimento**: tabelas `intents`, `training_phrases`, `bot_responses`.
 - **Avaliação**: tabela `test_cases` com a intenção esperada de cada pergunta (acurácia e matriz de confusão).
 - **Fallback controlado**: limiar configurável via `chatbot.fallback-threshold`.
-- **Sem contexto de conversa**: cada mensagem é classificada isoladamente. O `ChatService` guarda a última intenção por `sessionId` em memória, mas esse valor não é usado em nenhuma decisão (não há resolução de perguntas de seguimento como "e o anual?").
+- **Contexto de sessão (mínimo)**: o `ChatService` guarda em memória a última intent *respondida* de cada `sessionId` (`ContextoSessao`). Ela é usada **só para desempate**: quando a diferença de score entre a 1ª e a 2ª intent fica abaixo de `chatbot.margem-minima` e uma das duas é a última intent da sessão (ou da mesma família no mapa de `EquivalenciaIntents`, ex.: `plano_mensal` e `plano_anual`), o bot escolhe essa (motivo `contexto`). Fora desse caso o contexto não interfere: não há resolução de pronomes nem de perguntas de seguimento sem ambiguidade. Limites: a entrada expira após 30 min (`chatbot.contexto.ttl-minutos`) e o mapa guarda no máximo 10.000 sessões (`chatbot.contexto.max-sessoes`; descarta as expiradas e depois a menos usada). Sem `sessionId` a sessão é `anonimo`, compartilhada por todos, e por isso não usa contexto. Reiniciar a aplicação zera o contexto.
 - **Log de conversas**: toda interação é persistida, servindo de base para avaliação.
 
 ## Escopo

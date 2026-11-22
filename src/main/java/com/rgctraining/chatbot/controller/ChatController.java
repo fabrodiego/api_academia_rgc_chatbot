@@ -31,7 +31,7 @@ public class ChatController {
     @PostMapping
     public ChatResponse chat(@RequestBody ChatRequest request) {
         String sessionId = (request.getSessionId() == null || request.getSessionId().isBlank())
-                ? "anonimo"
+                ? ChatService.SESSAO_ANONIMA
                 : request.getSessionId();
 
         ChatService.RespostaChat r = chatService.responder(sessionId, request.getMensagem());
