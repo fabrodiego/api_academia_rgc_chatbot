@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demonstração técnica · RGC Training</title>
+<meta name="theme-color" content="#101820">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/demo.css">
+</head>
+<body class="tech tech-demo">
+<header class="tbar">
+ <a class="logo" href="/">RGC<span>.</span>TRAINING</a>
+ <h1 class="t">Demonstração técnica</h1>
+ <nav aria-label="Páginas técnicas"><a href="/demo.html" aria-current="page">Demo</a><a href="/avaliacao.html">Avaliação</a></nav>
+</header>
+<main class="demo">
+ <section class="dchat" aria-label="Chat">
+  <div id="log" class="dlog" role="log" aria-live="polite" aria-label="Conversa"></div>
+  <div class="examples" role="group" aria-label="Exemplos de pergunta">
+   <button type="button" class="chip-btn">Qual o valor do plano mensal?</button>
+   <button type="button" class="chip-btn">Não quero mais ser aluno</button>
+   <button type="button" class="chip-btn">Tem crossfit aí?</button>
+   <button type="button" class="chip-btn">Como troco o pneu do carro?</button>
+  </div>
+  <form id="form" class="dform">
+   <label for="in" class="visually-hidden">Mensagem</label>
+   <input id="in" type="text" maxlength="300" autocomplete="off" placeholder="Digite uma pergunta…">
+   <button class="btn main" type="submit" id="send">Enviar</button>
+  </form>
+ </section>
+ <aside class="panel" aria-labelledby="ph">
+  <h2 id="ph">Como o bot decidiu</h2>
+  <div id="out" aria-live="polite"><p class="empty">Envie uma pergunta (ou use um exemplo) para ver o raciocínio do classificador passo a passo.</p></div>
+ </aside>
+</main>
+<script src="js/config.js"></script>
+<script src="js/demo.js"></script>
+</body>
+</html>
