@@ -1,0 +1,30 @@
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css"><style>
+.q{position:absolute;width:330px;height:150px;background:#0f1720;border:2px solid #22d3ee;border-radius:14px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;font-size:21px;line-height:1.35;color:#e8f1f5;box-shadow:0 0 18px rgba(34,211,238,.2)}
+.q b{color:#22d3ee}.o{position:absolute;width:300px;padding:14px 16px;border-radius:14px;font-size:19px;line-height:1.35;text-align:center;background:#0f1720}
+.f{border:2px solid #f87171;color:#fecaca}.r{border:2px solid #34d399;color:#bbf7d0}.c{border:2px solid #fbbf24;color:#fde68a}
+.t{position:absolute;font-size:19px;color:#8aa0ad}.cfg{position:absolute;font-size:17px;color:#8aa0ad}
+</style></head><body>
+<h1>Regras de decisão: <span>quem decide o quê</span></h1>
+<div class="sub">O TF-IDF mede o quanto a pergunta se parece com cada intent; as regras decidem se o bot responde ou encaminha</div>
+<svg width="1920" height="1080"><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 z" fill="#22d3ee"/></marker></defs>
+<g stroke="#22d3ee" stroke-width="3" fill="none" marker-end="url(#a)">
+<line x1="394" y1="335" x2="470" y2="335"/><line x1="800" y1="335" x2="876" y2="335"/><line x1="1206" y1="335" x2="1282" y2="335"/>
+<line x1="1612" y1="335" x2="1640" y2="335"/>
+<line x1="229" y1="410" x2="229" y2="520"/><line x1="635" y1="410" x2="635" y2="520"/><line x1="1041" y1="410" x2="1041" y2="520"/><line x1="1447" y1="410" x2="1447" y2="520"/>
+</g></svg>
+<div class="q" style="left:64px;top:260px"><span class="n">a</span><b>Palavras conhecidas</b>fração ≥ mínimo?</div>
+<div class="q" style="left:470px;top:260px"><span class="n">b</span><b>Score da 1ª intent</b>≥ limiar 0,18?</div>
+<div class="q" style="left:876px;top:260px"><span class="n">c</span><b>Margem 1ª − 2ª</b>&lt; 0,02 e uma delas é a última intent da sessão?</div>
+<div class="q" style="left:1282px;top:260px"><span class="n">d</span><b>Margem 1ª − 2ª</b>≥ margem mínima?</div>
+<div class="o r" style="left:1640px;top:280px;width:230px">sim em tudo<br><b>responde com a 1ª intent</b><br>motivo <code>ok</code></div>
+<div class="t" style="left:405px;top:300px">sim</div><div class="t" style="left:811px;top:300px">sim</div><div class="t" style="left:1217px;top:300px">não</div>
+<div class="t" style="left:240px;top:450px">não</div><div class="t" style="left:646px;top:450px">não</div><div class="t" style="left:1052px;top:450px">sim</div><div class="t" style="left:1458px;top:450px">não</div>
+<div class="o f" style="left:79px;top:520px">encaminha ao humano<br>motivo <code>tokens_desconhecidos</code></div>
+<div class="o f" style="left:485px;top:520px">encaminha ao humano<br>motivo <code>score_baixo</code></div>
+<div class="o c" style="left:891px;top:520px">responde com a intent da sessão<br>motivo <code>contexto</code></div>
+<div class="o f" style="left:1297px;top:520px">encaminha ao humano<br>motivo <code>margem_pequena</code></div>
+<div class="cfg" style="left:79px;top:625px">hoje: mínimo 0 (desligada)</div>
+<div class="cfg" style="left:485px;top:625px">hoje: ligada</div><div class="cfg" style="left:891px;top:625px">hoje: ligada (TTL 30 min)</div>
+<div class="cfg" style="left:1297px;top:625px">hoje: mínima 0 (desligada)</div>
+<div style="position:absolute;left:64px;top:720px;width:1792px" class="box k"><h3>Por que as regras a) e d) estão desligadas (ADR 0002)</h3><p>Calibradas só no treino (leave-one-out, 0,46 / 0,03 / 1,0), elas reduzem as respostas erradas de 31 para 11, mas mandam 50 perguntas ao humano, a maioria que o bot acertava. Acurácia nos 188 casos: 77,1 % com as regras de hoje, contra 63,3 % com as calibradas. Ficam no código e voltam a valer só mudando o <code>application.yml</code>.</p></div>
+</body></html>

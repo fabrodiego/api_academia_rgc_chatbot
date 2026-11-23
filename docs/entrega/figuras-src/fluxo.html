@@ -1,0 +1,25 @@
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css"><link rel="stylesheet" href="flex.css"></head><body>
+<h1>Fluxo completo do chatbot <span>RGC</span></h1>
+<div class="sub">Cada mensagem passa por 3 etapas próprias (sem serviço de PLN pronto) até virar resposta ou encaminhamento</div>
+<div class="lbl">Caminho de uma mensagem</div>
+<div class="row" style="height:420px">
+ <div class="card" style="flex:.8"><h3>Entrada</h3><p>Usuário no site (widget) ou na <code>/demo.html</code></p><p style="margin-top:14px"><code>POST /api/chat</code></p><p style="margin-top:14px">Spring Boot 3 · Java 17</p></div>
+ <div class="arr">➜</div>
+ <div class="card k"><h3><span class="n">1</span>Pré-processamento</h3><ul><li>minúsculas, sem acento e pontuação</li><li>remove stopwords</li><li>negação: <code>nao_quero</code></li><li>"aí" vira <code>e_ai</code> só após cumprimento</li></ul></div>
+ <div class="arr">➜</div>
+ <div class="card k"><h3><span class="n">2</span>TF-IDF + cosseno</h3><ul><li>vetor TF-IDF da mensagem</li><li>cosseno com as 1.410 frases de treino</li><li>score da intent = melhor frase</li><li>top-3, margem e % de palavras conhecidas</li></ul></div>
+ <div class="arr">➜</div>
+ <div class="card k" style="flex:1.15"><h3><span class="n">3</span>Regras de decisão</h3><ul><li>palavras conhecidas &lt; mínimo → encaminha</li><li>score &lt; <b>0,18</b> → encaminha</li><li>margem &lt; 0,02 → contexto desempata</li><li>margem &lt; mínima → encaminha</li><li>senão → responde a 1ª intent</li></ul></div>
+ <div class="arr">➜</div>
+ <div class="stack" style="flex:.8"><div class="card ok"><h3>Responde</h3><p>texto da intent em <code>bot_responses</code></p></div><div class="card bad"><h3>Encaminha</h3><p>atendimento humano (recepção / WhatsApp)</p></div></div>
+</div>
+<div class="lbl">Componentes de apoio</div>
+<div class="row" style="gap:22px;height:150px">
+ <div class="card db"><h3>Base de conhecimento</h3><p>Postgres: 49 intents, 97 respostas, 1.410 frases; carregada em memória</p></div>
+ <div class="card db"><h3>Contexto da sessão</h3><p>última intent por <code>sessionId</code>, 30 min; usado só no desempate</p></div>
+ <div class="card db"><h3>Log de conversas</h3><p>toda interação vai para <code>conversations</code></p></div>
+ <div class="card db"><h3>Feedback humano</h3><p>frase só vira treino depois que a equipe confirma a intent</p></div>
+</div>
+<div class="lbl">Exemplo real (produção)</div>
+<div class="card" style="font-size:21px;color:#c9d6dd;padding:16px 22px">"Qual o valor do plano mensal?" ➜ <code>valor plano mensal</code> ➜ <code>plano_mensal</code> 1,00 · <code>planos_valores</code> 0,70 · <code>plano_anual</code> 0,68 ➜ passou nas regras ➜ <b style="color:#34d399">responde plano_mensal</b> (7 ms)</div>
+</body></html>

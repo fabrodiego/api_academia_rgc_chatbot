@@ -1,0 +1,11 @@
+*{box-sizing:border-box;margin:0}body{width:1920px;height:1080px;background:#07090d;color:#e8f1f5;font-family:"DejaVu Sans",Arial,sans-serif;padding:56px 64px;position:relative;overflow:hidden}
+h1{font-size:46px;font-weight:700;color:#e8f1f5;margin-bottom:6px}h1 span{color:#22d3ee}.sub{font-size:24px;color:#8aa0ad;margin-bottom:40px}
+.box{background:#0f1720;border:2px solid #1e3a46;border-radius:16px;padding:18px 20px;position:absolute}
+.box.k{border-color:#22d3ee;box-shadow:0 0 22px rgba(34,211,238,.25)}
+.box h3{font-size:25px;color:#22d3ee;margin-bottom:8px}.box p{font-size:19px;line-height:1.38;color:#c9d6dd}
+.box code,code{font-family:"DejaVu Sans Mono",monospace;font-size:17px;color:#a5f3fc;background:#0b2530;padding:1px 6px;border-radius:5px}
+.ok{border-color:#34d399!important}.ok h3{color:#34d399}.bad{border-color:#f87171!important}.bad h3{color:#f87171}
+.amb{border-color:#fbbf24!important}.amb h3{color:#fbbf24}
+.db{background:#0b141b;border-style:dashed}.tag{position:absolute;font-size:17px;color:#8aa0ad}
+svg{position:absolute;left:0;top:0}
+.n{display:inline-block;width:34px;height:34px;border-radius:50%;background:#22d3ee;color:#07090d;font-weight:700;text-align:center;line-height:34px;font-size:20px;margin-right:8px}

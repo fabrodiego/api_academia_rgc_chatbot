@@ -1,0 +1,19 @@
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css"><link rel="stylesheet" href="flex.css"><style>.card p,.card li{font-size:22px}.card.db p{font-size:21px}</style></head><body>
+<h1>Como medimos: <span>treino e teste separados</span></h1>
+<div class="sub">A calibração usa só o treino; os 188 casos de teste nunca entram no modelo</div>
+<div class="row" style="height:300px;margin-top:30px">
+ <div class="card"><h3>sql/banco.sql</h3><p>base versionada no Git</p><ul style="margin-top:10px"><li>1.410 frases de treino</li><li>188 casos de teste com intent esperada</li></ul></div>
+ <div class="arr">➜</div>
+ <div class="card k"><h3>Trava anti-vazamento</h3><p><code>SeparacaoTreinoTesteTest</code> falha se um caso de teste, normalizado, for igual a uma frase de treino</p></div>
+ <div class="arr">➜</div>
+ <div class="card k"><h3>Executor</h3><p><code>POST /api/avaliacao</code> roda cada caso pela mesma decisão do chat, sem gravar conversa</p></div>
+ <div class="arr">➜</div>
+ <div class="card ok"><h3>Métricas</h3><ul><li>acurácia estrita e com equivalência</li><li>por tipo de caso</li><li>precisão e recall por intent</li><li>matriz de confusão</li><li>taxa de encaminhamento</li></ul></div>
+</div>
+<div class="row" style="gap:22px;height:230px;margin-top:50px">
+ <div class="card db"><h3>Calibração (só treino)</h3><p>leave-one-out nas 1.410 frases: cada frase é classificada por um modelo sem ela. Varredura de 1.736 combinações de limiar, margem e fração.</p></div>
+ <div class="card db"><h3>Regra de equivalência</h3><p>fora de escopo aceita fallback ou <code>fora_escopo</code>; intent genérica aceita a específica. Mapa definido antes de olhar os erros.</p></div>
+ <div class="card db"><h3>Tipos de caso</h3><p>padrão 71 · variação 63 · difícil 30 · fora de escopo 17 · ambígua 7</p></div>
+ <div class="card db"><h3>Baseline</h3><p>Naive Bayes multinomial feito à mão, mesmo pré-processamento, para comparar com o TF-IDF</p></div>
+</div>
+</body></html>
